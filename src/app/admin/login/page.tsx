@@ -83,9 +83,7 @@ export default function AdminLogin() {
             </Button>
           </form>
           <div className="mt-4 text-sm text-muted-foreground">
-            <p>Default credentials:</p>
-            <p>Email: admin@rumered.com</p>
-            <p>Password: admin123</p>
+            <p>Ask the site owner to grant your account ADMIN role.</p>
           </div>
         </CardContent>
       </Card>

@@ -11,7 +11,7 @@ import Link from 'next/link';
 interface RatingControlProps {
   itemId: string;
   itemType: 'DORM' | 'FIT';
-  onRate?: (rating: number) => void;
+  onRate?: (rating: number, aggregate?: { average: number; count: number }) => void;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
@@ -67,8 +67,9 @@ export function RatingControl({
       });
 
       if (response.ok) {
+        const data = await response.json();
         setUserRating(rating);
-        onRate?.(rating);
+        onRate?.(rating, data?.rating);
         toast.success('Rating submitted!');
         // Show success feedback
         setTimeout(() => setJustRated(false), 1000);

@@ -26,7 +26,9 @@ export function AddDormForm({ onClose, onDormAdded }: AddDormFormProps) {
     description: '',
     photos: [] as string[],
     amenities: [] as string[],
-    tags: [] as string[]
+    tags: [] as string[],
+    personInstagram: '',
+    personGrade: ''
   });
   const [newPhoto, setNewPhoto] = useState('');
   const [newAmenity, setNewAmenity] = useState('');
@@ -141,6 +143,24 @@ export function AddDormForm({ onClose, onDormAdded }: AddDormFormProps) {
                   placeholder="e.g., Room 201"
                 />
               </div>
+            <div className="space-y-2">
+              <Label htmlFor="personInstagram">Instagram</Label>
+              <Input
+                id="personInstagram"
+                value={formData.personInstagram}
+                onChange={(e) => setFormData(prev => ({ ...prev, personInstagram: e.target.value }))}
+                placeholder="@username"
+              />
+            </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="personGrade">Grade/Class</Label>
+              <Input
+                id="personGrade"
+                value={formData.personGrade}
+                onChange={(e) => setFormData(prev => ({ ...prev, personGrade: e.target.value }))}
+                placeholder="e.g., Freshman"
+              />
             </div>
 
             <div className="space-y-2">

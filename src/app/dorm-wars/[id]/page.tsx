@@ -12,7 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, MapPin, Home, Star, CheckCircle, Loader2 } from 'lucide-react';
-import { getDormById, getDorms, rateDorm } from '@/lib/data';
+import { getDormById, getDorms } from '@/lib/data';
 import { Dorm } from '@/lib/types';
 import { track, ANALYTICS_EVENTS } from '@/lib/analytics';
 
@@ -80,11 +80,12 @@ export default function DormDetailPage({ params }: DormDetailPageProps) {
     notFound();
   }
 
-  const handleRate = async (rating: number) => {
+  const handleRate = async (rating: number, aggregate?: { average: number; count: number }) => {
     setIsRating(true);
     try {
-      const newRating = rateDorm(dorm.id, rating);
-      setDorm({ ...dorm, rating: newRating });
+      if (aggregate) {
+        setDorm({ ...dorm, rating: aggregate });
+      }
       track(ANALYTICS_EVENTS.RATE_DORM, { dormId: dorm.id, rating });
     } catch (error) {
       console.error('Failed to rate dorm:', error);

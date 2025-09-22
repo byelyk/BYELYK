@@ -12,7 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, User, MapPin, Star, Shirt, Loader2 } from 'lucide-react';
-import { getFitById, getFits, rateFit } from '@/lib/data';
+import { getFitById, getFits } from '@/lib/data';
 import { Fit } from '@/lib/types';
 import { track, ANALYTICS_EVENTS } from '@/lib/analytics';
 
@@ -80,11 +80,12 @@ export default function FitDetailPage({ params }: FitDetailPageProps) {
     notFound();
   }
 
-  const handleRate = async (rating: number) => {
+  const handleRate = async (rating: number, aggregate?: { average: number; count: number }) => {
     setIsRating(true);
     try {
-      const newRating = rateFit(fit.id, rating);
-      setFit({ ...fit, rating: newRating });
+      if (aggregate) {
+        setFit({ ...fit, rating: aggregate });
+      }
       track(ANALYTICS_EVENTS.RATE_FIT, { fitId: fit.id, rating });
     } catch (error) {
       console.error('Failed to rate fit:', error);

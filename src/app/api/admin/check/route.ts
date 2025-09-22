@@ -5,9 +5,17 @@ export async function GET() {
   try {
     const cookieStore = await cookies();
     const adminSession = cookieStore.get('admin-session');
+    const userSession = cookieStore.get('user-session');
 
     if (adminSession?.value === 'true') {
       return NextResponse.json({ isAdmin: true });
+    }
+
+    if (userSession?.value) {
+      try {
+        const u = JSON.parse(userSession.value);
+        if (u?.role === 'ADMIN') return NextResponse.json({ isAdmin: true });
+      } catch {}
     }
 
     return NextResponse.json({ isAdmin: false });

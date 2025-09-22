@@ -1,0 +1,19 @@
+
+> rumered@0.1.0 dev
+> next dev --turbopack
+
+ ⚠ Port 3000 is in use by process 17058, using available port 3002 instead.
+   ▲ Next.js 15.5.3 (Turbopack)
+   - Local:        http://localhost:3002
+   - Network:      http://172.17.205.131:3002
+   - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 844ms
+ ○ Compiling /api/auth/register ...
+ ✓ Compiled /api/auth/register in 784ms
+ POST /api/auth/register 200 in 2001ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1597ms
+ GET / 200 in 2087ms
+[?25h

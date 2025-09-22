@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, Mail, Instagram, MessageSquare, Calendar, User, Loader2, Edit, Trash2, Star, Heart, Image as ImageIcon, LogOut, Plus } from 'lucide-react';
 import { AdminEditModal } from '@/components/AdminEditModal';
 import { AddDormForm } from '@/components/AddDormForm';
+import { AddFitForm } from '@/components/AddFitForm';
 import { toast } from 'sonner';
 
 export default function AdminPage() {
@@ -29,6 +30,7 @@ export default function AdminPage() {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [editingType, setEditingType] = useState<'dorm' | 'fit'>('dorm');
   const [addDormModalOpen, setAddDormModalOpen] = useState(false);
+  const [addFitModalOpen, setAddFitModalOpen] = useState(false);
 
   useEffect(() => {
     // Check admin status
@@ -265,7 +267,7 @@ export default function AdminPage() {
             </Card>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="grid lg:grid-cols-3 gap-8">
             {/* Applications List */}
             <div className="lg:col-span-2">
               <Tabs defaultValue="applications" className="space-y-4">
@@ -400,6 +402,13 @@ export default function AdminPage() {
                 </TabsContent>
 
                 <TabsContent value="fits" className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Fit Checks</h3>
+                    <Button onClick={() => setAddFitModalOpen(true)} className="flex items-center gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add Fit
+                    </Button>
+                  </div>
                   {(!Array.isArray(fits) || fits.length === 0) ? (
                     <Card>
                       <CardContent className="p-8 text-center text-muted-foreground">
@@ -633,6 +642,14 @@ export default function AdminPage() {
         <AddDormForm
           onClose={() => setAddDormModalOpen(false)}
           onDormAdded={handleDormAdded}
+        />
+      )}
+      {addFitModalOpen && (
+        <AddFitForm
+          onClose={() => setAddFitModalOpen(false)}
+          onFitAdded={() => {
+            fetch('/api/admin/fits').then(res => res.json()).then(data => setFits(data)).catch(() => {});
+          }}
         />
       )}
     </div>

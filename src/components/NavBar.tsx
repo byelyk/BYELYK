@@ -80,7 +80,7 @@ export function NavBar() {
                 <Link href="/auth/register">
                   <Button variant="outline" size="sm">Register</Button>
                 </Link>
-                <Link href="/auth/signin">
+                <Link href={`https://api.stack-auth.com/authenticate?project_id=${process.env.NEXT_PUBLIC_STACK_PROJECT_ID}`}>
                   <Button size="sm">Sign In</Button>
                 </Link>
               </div>

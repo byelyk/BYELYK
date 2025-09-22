@@ -1,4 +1,4 @@
-import { AuthForm } from '@/components/AuthForm';
+import Link from 'next/link';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 
@@ -19,7 +19,11 @@ export default function SignInPage() {
             </p>
           </div>
           
-          <AuthForm />
+          <div className="text-center">
+            <Link href={`https://api.stack-auth.com/authenticate?project_id=${process.env.NEXT_PUBLIC_STACK_PROJECT_ID}`} className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground">
+              Sign in with Neon Auth
+            </Link>
+          </div>
         </div>
       </main>
 

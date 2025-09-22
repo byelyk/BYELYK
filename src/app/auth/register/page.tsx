@@ -13,6 +13,8 @@ import { toast } from 'sonner';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,7 +26,7 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password, username: username || undefined, name: name || undefined })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Registration failed');
@@ -33,7 +35,7 @@ export default function RegisterPage() {
       const loginRes = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
       });
       if (!loginRes.ok) throw new Error('Auto sign-in failed');
 
@@ -62,8 +64,16 @@ export default function RegisterPage() {
             <CardContent>
               <form onSubmit={handleRegister} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="yourname" required />
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name (optional)</Label>
+                  <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username (optional)</Label>
+                  <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="yourname" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>

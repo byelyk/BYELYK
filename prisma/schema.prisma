@@ -16,12 +16,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -117,6 +117,9 @@ model Dorm {
   photos        String   // JSON string of photo URLs
   tags          String   // JSON string of tags
   rating        Json     // { average: number, count: number }
+  personName    String?
+  personInstagram String?
+  personGrade   String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -126,6 +129,7 @@ model Dorm {
 model Fit {
   id          String   @id @default(cuid())
   creator     String   // username or display name
+  creatorInstagram String?
   description String
   photos      String   // JSON string of photo URLs
   styleTags   String   // JSON string of style tags

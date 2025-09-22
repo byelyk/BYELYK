@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name, building, roomNumber, description, photos, amenities, tags } = await request.json();
+    const { name, building, roomNumber, description, photos, amenities, tags, personInstagram, personGrade } = await request.json();
 
     // Create new dorm in database
     const newDorm = await prisma.dorm.create({
@@ -23,7 +23,10 @@ export async function POST(request: NextRequest) {
         photos: JSON.stringify(photos || []),
         tags: JSON.stringify(tags || []),
         rating: { average: 0, count: 0 },
-        addressOrArea: `${building} • ${roomNumber || ''}`
+        addressOrArea: `${building} • ${roomNumber || ''}`,
+        personName: name,
+        personInstagram: personInstagram || null,
+        personGrade: personGrade || null
       }
     });
 
