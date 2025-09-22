@@ -23,13 +23,43 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // For now, we'll just return success since we're using static data
-    // In production, you would update the database or external storage
-    console.log(`Updating ${type} ${id}:`, data);
+    let updatedItem;
+
+    if (type === 'dorm') {
+      updatedItem = await prisma.dorm.update({
+        where: { id },
+        data: {
+          name: data.name,
+          addressOrArea: data.addressOrArea,
+          type: data.type,
+          description: data.description,
+          photos: JSON.stringify(data.photos || []),
+          tags: JSON.stringify(data.tags || []),
+          rating: data.rating || { average: 0, count: 0 }
+        }
+      });
+    } else if (type === 'fit') {
+      updatedItem = await prisma.fit.update({
+        where: { id },
+        data: {
+          creator: data.creator,
+          description: data.description,
+          photos: JSON.stringify(data.photos || []),
+          styleTags: JSON.stringify(data.styleTags || []),
+          dorm: data.dorm,
+          rating: data.rating || { average: 0, count: 0 }
+        }
+      });
+    } else {
+      return NextResponse.json(
+        { message: 'Invalid type. Must be "dorm" or "fit"' },
+        { status: 400 }
+      );
+    }
 
     return NextResponse.json({ 
       message: 'Content updated successfully',
-      data 
+      data: updatedItem 
     });
   } catch (error) {
     console.error('Update content error:', error);

@@ -1,9 +1,5 @@
 import { Dorm, Fit, Application, DormFilters, FitFilters } from './types';
-
-// Mock data store (in-memory for MVP)
-let dorms: Dorm[] = [];
-let fits: Fit[] = [];
-const applications: Application[] = [];
+import { prisma } from './db';
 
 // UH Housing Seed Data
 const seedDorms: Dorm[] = [
@@ -239,66 +235,136 @@ dorms = [...seedDorms];
 fits = [...seedFits];
 
 // Service functions
-export function getDorms(filters?: DormFilters): Dorm[] {
-  let filteredDorms = [...dorms];
+export async function getDorms(filters?: DormFilters): Promise<Dorm[]> {
+  try {
+    const dorms = await prisma.dorm.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
 
-  if (filters) {
-    if (filters.hall && filters.hall.length > 0) {
-      filteredDorms = filteredDorms.filter(dorm => filters.hall!.includes(dorm.hall));
+    // Parse JSON fields
+    const dormsWithParsedData = dorms.map(dorm => ({
+      ...dorm,
+      photos: JSON.parse(dorm.photos || '[]'),
+      tags: JSON.parse(dorm.tags || '[]'),
+      rating: dorm.rating as { average: number; count: number }
+    }));
+
+    let filteredDorms = dormsWithParsedData;
+
+    if (filters) {
+      if (filters.hall && filters.hall.length > 0) {
+        filteredDorms = filteredDorms.filter(dorm => filters.hall!.includes(dorm.name));
+      }
+      
+      if (filters.type && filters.type.length > 0) {
+        filteredDorms = filteredDorms.filter(dorm => filters.type!.includes(dorm.type));
+      }
+      
+      if (filters.tags && filters.tags.length > 0) {
+        filteredDorms = filteredDorms.filter(dorm => 
+          filters.tags!.some(tag => dorm.tags.includes(tag))
+        );
+      }
+      
+      if (filters.q) {
+        const query = filters.q.toLowerCase();
+        filteredDorms = filteredDorms.filter(dorm => 
+          dorm.name.toLowerCase().includes(query) ||
+          (dorm.description && dorm.description.toLowerCase().includes(query)) ||
+          dorm.tags.some(tag => tag.toLowerCase().includes(query))
+        );
+      }
     }
-    
-    if (filters.type && filters.type.length > 0) {
-      filteredDorms = filteredDorms.filter(dorm => filters.type!.includes(dorm.type));
-    }
-    
-    if (filters.tags && filters.tags.length > 0) {
-      filteredDorms = filteredDorms.filter(dorm => 
-        filters.tags!.some(tag => dorm.tags.includes(tag))
-      );
-    }
-    
-    if (filters.q) {
-      const query = filters.q.toLowerCase();
-      filteredDorms = filteredDorms.filter(dorm => 
-        dorm.name.toLowerCase().includes(query) ||
-        dorm.description.toLowerCase().includes(query) ||
-        dorm.tags.some(tag => tag.toLowerCase().includes(query))
-      );
-    }
+
+    return filteredDorms.sort((a, b) => b.rating.average - a.rating.average);
+  } catch (error) {
+    console.error('Error fetching dorms:', error);
+    return [];
   }
-
-  return filteredDorms.sort((a, b) => b.rating.average - a.rating.average);
 }
 
-export function getFits(filters?: FitFilters): Fit[] {
-  let filteredFits = [...fits];
+export async function getFits(filters?: FitFilters): Promise<Fit[]> {
+  try {
+    const fits = await prisma.fit.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
 
-  if (filters) {
-    if (filters.styleTags && filters.styleTags.length > 0) {
-      filteredFits = filteredFits.filter(fit => 
-        filters.styleTags!.some(tag => fit.styleTags.includes(tag))
-      );
+    // Parse JSON fields
+    const fitsWithParsedData = fits.map(fit => ({
+      ...fit,
+      photos: JSON.parse(fit.photos || '[]'),
+      styleTags: JSON.parse(fit.styleTags || '[]'),
+      rating: fit.rating as { average: number; count: number }
+    }));
+
+    let filteredFits = fitsWithParsedData;
+
+    if (filters) {
+      if (filters.styleTags && filters.styleTags.length > 0) {
+        filteredFits = filteredFits.filter(fit => 
+          filters.styleTags!.some(tag => fit.styleTags.includes(tag))
+        );
+      }
+      
+      if (filters.q) {
+        const query = filters.q.toLowerCase();
+        filteredFits = filteredFits.filter(fit => 
+          fit.creator.toLowerCase().includes(query) ||
+          fit.description.toLowerCase().includes(query) ||
+          fit.styleTags.some(tag => tag.toLowerCase().includes(query))
+        );
+      }
     }
-    
-    if (filters.q) {
-      const query = filters.q.toLowerCase();
-      filteredFits = filteredFits.filter(fit => 
-        fit.creator.toLowerCase().includes(query) ||
-        fit.description.toLowerCase().includes(query) ||
-        fit.styleTags.some(tag => tag.toLowerCase().includes(query))
-      );
-    }
+
+    return filteredFits.sort((a, b) => b.rating.average - a.rating.average);
+  } catch (error) {
+    console.error('Error fetching fits:', error);
+    return [];
   }
-
-  return filteredFits.sort((a, b) => b.rating.average - a.rating.average);
 }
 
-export function getDormById(id: string): Dorm | undefined {
-  return dorms.find(dorm => dorm.id === id);
+export async function getDormById(id: string): Promise<Dorm | undefined> {
+  try {
+    const dorm = await prisma.dorm.findUnique({
+      where: { id }
+    });
+
+    if (!dorm) return undefined;
+
+    return {
+      ...dorm,
+      photos: JSON.parse(dorm.photos || '[]'),
+      tags: JSON.parse(dorm.tags || '[]'),
+      rating: dorm.rating as { average: number; count: number }
+    };
+  } catch (error) {
+    console.error('Error fetching dorm by ID:', error);
+    return undefined;
+  }
 }
 
-export function getFitById(id: string): Fit | undefined {
-  return fits.find(fit => fit.id === id);
+export async function getFitById(id: string): Promise<Fit | undefined> {
+  try {
+    const fit = await prisma.fit.findUnique({
+      where: { id }
+    });
+
+    if (!fit) return undefined;
+
+    return {
+      ...fit,
+      photos: JSON.parse(fit.photos || '[]'),
+      styleTags: JSON.parse(fit.styleTags || '[]'),
+      rating: fit.rating as { average: number; count: number }
+    };
+  } catch (error) {
+    console.error('Error fetching fit by ID:', error);
+    return undefined;
+  }
 }
 
 export function rateDorm(id: string, score: number): { average: number; count: number } {

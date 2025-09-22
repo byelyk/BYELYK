@@ -65,6 +65,35 @@ model Application {
   @@map("applications")
 }
 
+model Dorm {
+  id            String   @id @default(cuid())
+  name          String
+  addressOrArea String
+  type          String   // e.g., "Traditional", "Suite", "Apartment"
+  description   String?
+  photos        String   // JSON string of photo URLs
+  tags          String   // JSON string of tags
+  rating        Json     // { average: number, count: number }
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("dorms")
+}
+
+model Fit {
+  id          String   @id @default(cuid())
+  creator     String   // username or display name
+  description String
+  photos      String   // JSON string of photo URLs
+  styleTags   String   // JSON string of style tags
+  dorm        String?  // associated dorm name
+  rating      Json     // { average: number, count: number }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("fits")
+}
+
 enum UserRole {
   USER
   ADMIN

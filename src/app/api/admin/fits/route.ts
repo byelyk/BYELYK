@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { getFits } from '@/lib/data';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
@@ -15,32 +14,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get fits from the data layer and add vote counts
-    const fits = getFits();
-    
-    // Get vote counts for each fit
-    const fitVotes = await prisma.vote.findMany({
-      where: { itemType: 'FIT' },
-      select: { itemId: true, score: true }
+    // Get fits from database
+    const fits = await prisma.fit.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
-    // Calculate ratings for each fit
-    const fitsWithRatings = fits.map(fit => {
-      const votes = fitVotes.filter(vote => vote.itemId === fit.id);
-      const average = votes.length > 0 
-        ? votes.reduce((sum, vote) => sum + vote.score, 0) / votes.length 
-        : 0;
-      
-      return {
-        ...fit,
-        rating: {
-          average,
-          count: votes.length
-        }
-      };
-    });
+    // Parse JSON fields and return
+    const fitsWithParsedData = fits.map(fit => ({
+      ...fit,
+      photos: JSON.parse(fit.photos || '[]'),
+      styleTags: JSON.parse(fit.styleTags || '[]'),
+      rating: fit.rating as { average: number; count: number }
+    }));
 
-    return NextResponse.json(fitsWithRatings);
+    return NextResponse.json(fitsWithParsedData);
   } catch (error) {
     console.error('Get fits error:', error);
     return NextResponse.json(

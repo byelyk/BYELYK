@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { getDorms } from '@/lib/data';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
@@ -15,32 +14,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get dorms from the data layer and add vote counts
-    const dorms = getDorms();
-    
-    // Get vote counts for each dorm
-    const dormVotes = await prisma.vote.findMany({
-      where: { itemType: 'DORM' },
-      select: { itemId: true, score: true }
+    // Get dorms from database
+    const dorms = await prisma.dorm.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
-    // Calculate ratings for each dorm
-    const dormsWithRatings = dorms.map(dorm => {
-      const votes = dormVotes.filter(vote => vote.itemId === dorm.id);
-      const average = votes.length > 0 
-        ? votes.reduce((sum, vote) => sum + vote.score, 0) / votes.length 
-        : 0;
-      
-      return {
-        ...dorm,
-        rating: {
-          average,
-          count: votes.length
-        }
-      };
-    });
+    // Parse JSON fields and return
+    const dormsWithParsedData = dorms.map(dorm => ({
+      ...dorm,
+      photos: JSON.parse(dorm.photos || '[]'),
+      tags: JSON.parse(dorm.tags || '[]'),
+      rating: dorm.rating as { average: number; count: number }
+    }));
 
-    return NextResponse.json(dormsWithRatings);
+    return NextResponse.json(dormsWithParsedData);
   } catch (error) {
     console.error('Get dorms error:', error);
     return NextResponse.json(
