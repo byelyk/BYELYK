@@ -15,19 +15,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rate My | BYELYK",
+  title: "Rumered | BYELYK",
   description: "Rate dorms, rank fits, crown winners. The University of Houston's premier dorm and fashion rating community.",
-  keywords: ["University of Houston", "rate my", "fashion", "student housing", "UH", "BYELYK"],
+  keywords: ["University of Houston", "rumered", "fashion", "student housing", "UH", "BYELYK"],
   authors: [{ name: "BYELYK" }],
+  icons: {
+    icon: "/favicons/favicon.ico",
+    shortcut: "/favicons/favicon.ico",
+    apple: "/favicons/favicon.ico",
+  },
   openGraph: {
-    title: "Rate My | BYELYK",
+    title: "Rumered | BYELYK",
     description: "Rate dorms, rank fits, crown winners. The University of Houston's premier dorm and fashion rating community.",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Rate My | BYELYK",
+    title: "Rumered | BYELYK",
     description: "Rate dorms, rank fits, crown winners. The University of Houston's premier dorm and fashion rating community.",
   },
 };
