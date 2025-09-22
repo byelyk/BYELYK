@@ -185,6 +185,8 @@ export default function DormDetailPage({ params }: DormDetailPageProps) {
                   <div className="border-t pt-4">
                     <h4 className="font-medium mb-3">Rate this dorm</h4>
                     <RatingControl
+                      itemId={dorm.id}
+                      itemType="DORM"
                       currentRating={userRating}
                       onRate={handleRate}
                       disabled={isRating}

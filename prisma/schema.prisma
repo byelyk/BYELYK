@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  username  String?  @unique
+  password  String
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  votes        Vote[]
+  applications Application[]
+
+  @@map("users")
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  userId    String
+  itemId    String
+  itemType  VoteType
+  score     Int      // 1-10 rating
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId, itemType])
+  @@map("votes")
+}
+
+model Application {
+  id          String            @id @default(cuid())
+  userId      String
+  section     ApplicationSection
+  name        String
+  email       String?
+  instagram   String?
+  tiktok      String?
+  dormOrHall  String?
+  message     String
+  photoUrls   String            // JSON string of photo URLs
+  status      ApplicationStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("applications")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum VoteType {
+  DORM
+  FIT
+}
+
+enum ApplicationSection {
+  DORM_WARS
+  FIT_CHECKS
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

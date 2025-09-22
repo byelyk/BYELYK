@@ -3,11 +3,19 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useSession, signOut } from 'next-auth/react';
+import { toast } from 'sonner';
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+
+  const handleSignOut = () => {
+    signOut();
+    toast.success('Signed out successfully');
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -42,7 +50,37 @@ export function NavBar() {
             >
               ✨ Apply
             </Link>
+            {session?.user?.role === 'ADMIN' && (
+              <Link 
+                href="/admin" 
+                className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-1"
+              >
+                🔧 Admin
+              </Link>
+            )}
             <ThemeToggle />
+            {session ? (
+              <div className="flex items-center gap-2">
+                <Link href="/profile">
+                  <Button variant="ghost" size="sm">
+                    <User className="h-4 w-4 mr-2" />
+                    {session.user?.name}
+                    {session.user?.role === 'ADMIN' && (
+                      <span className="ml-2 text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
+                        Admin
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <Link href="/auth/signin">
+                <Button size="sm">Sign In</Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -84,6 +122,35 @@ export function NavBar() {
               >
                 ✨ Apply
               </Link>
+              {session?.user?.role === 'ADMIN' && (
+                <Link 
+                  href="/admin" 
+                  className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  🔧 Admin
+                </Link>
+              )}
+              {session ? (
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    <span className="text-sm">{session.user?.name}</span>
+                    {session.user?.role === 'ADMIN' && (
+                      <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                  <Button variant="outline" size="sm" onClick={handleSignOut}>
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Link href="/auth/signin" onClick={() => setIsMenuOpen(false)}>
+                  <Button size="sm" className="w-full">Sign In</Button>
+                </Link>
+              )}
             </div>
           </div>
         )}

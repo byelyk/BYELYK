@@ -167,6 +167,8 @@ export default function FitDetailPage({ params }: FitDetailPageProps) {
                   <div className="border-t pt-4">
                     <h4 className="font-medium mb-3">Rate this fit</h4>
                     <RatingControl
+                      itemId={fit.id}
+                      itemType="FIT"
                       currentRating={userRating}
                       onRate={handleRate}
                       disabled={isRating}

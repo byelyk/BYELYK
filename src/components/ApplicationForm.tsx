@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,9 +12,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Upload, X, CheckCircle } from 'lucide-react';
+import { Upload, X, CheckCircle, LogIn } from 'lucide-react';
 import { submitApplication, HALL_OPTIONS } from '@/lib/data';
 import { track, ANALYTICS_EVENTS } from '@/lib/analytics';
+import Link from 'next/link';
 
 const applicationSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -31,6 +33,7 @@ interface ApplicationFormProps {
 }
 
 export function ApplicationForm({ section }: ApplicationFormProps) {
+  const { data: session, status } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -45,26 +48,38 @@ export function ApplicationForm({ section }: ApplicationFormProps) {
   });
 
   const onSubmit = async (data: ApplicationFormData) => {
+    if (!session?.user?.id) return;
+    
     setIsSubmitting(true);
     try {
       // TODO: Upload files to S3/Supabase storage
       const photoUrls = uploadedFiles.map(file => URL.createObjectURL(file));
       
-      await submitApplication({
-        section,
-        name: data.name,
-        email: data.email || undefined,
-        instagram: data.instagram || undefined,
-        tiktok: data.tiktok || undefined,
-        dormOrHall: data.dormOrHall || undefined,
-        message: data.message,
-        photoUrls,
+      const response = await fetch('/api/applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          section: section.toUpperCase().replace('-', '_'),
+          name: data.name,
+          email: data.email || undefined,
+          instagram: data.instagram || undefined,
+          tiktok: data.tiktok || undefined,
+          dormOrHall: data.dormOrHall || undefined,
+          message: data.message,
+          photoUrls: JSON.stringify(photoUrls),
+        }),
       });
 
-      track(ANALYTICS_EVENTS.SUBMIT_APPLICATION, { section });
-      setIsSubmitted(true);
-      reset();
-      setUploadedFiles([]);
+      if (response.ok) {
+        track(ANALYTICS_EVENTS.SUBMIT_APPLICATION, { section });
+        setIsSubmitted(true);
+        reset();
+        setUploadedFiles([]);
+      } else {
+        throw new Error('Failed to submit application');
+      }
     } catch (error) {
       console.error('Failed to submit application:', error);
     } finally {
@@ -80,6 +95,34 @@ export function ApplicationForm({ section }: ApplicationFormProps) {
   const removeFile = (index: number) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
+
+  if (status === 'loading') {
+    return (
+      <Card className="max-w-2xl mx-auto">
+        <CardContent className="p-8 text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!session) {
+    return (
+      <Card className="max-w-2xl mx-auto">
+        <CardContent className="p-8 text-center">
+          <LogIn className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-4">Sign In Required</h2>
+          <p className="text-muted-foreground mb-6">
+            You need to be signed in to submit an application.
+          </p>
+          <Link href="/auth/signin">
+            <Button>Sign In</Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (isSubmitted) {
     return (

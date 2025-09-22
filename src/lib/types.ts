@@ -57,3 +57,28 @@ export type FitFilters = {
   styleTags?: string[];
   q?: string;
 };
+
+// Database types
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  username?: string;
+  role: 'USER' | 'ADMIN';
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type Vote = {
+  id: string;
+  userId: string;
+  itemId: string;
+  itemType: 'DORM' | 'FIT';
+  score: number;
+  createdAt: Date;
+};
+
+export type UserRole = 'USER' | 'ADMIN';
+export type VoteType = 'DORM' | 'FIT';
+export type ApplicationSection = 'DORM_WARS' | 'FIT_CHECKS';
+export type ApplicationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';

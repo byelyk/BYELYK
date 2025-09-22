@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Star, MapPin, Users, Heart, Sparkles } from 'lucide-react';
 import { Dorm, Fit } from '@/lib/types';
+import { RatingControl } from '@/components/RatingControl';
 
 interface ItemCardProps {
   item: Dorm | Fit;
@@ -66,27 +67,38 @@ export function ItemCard({ item, type }: ItemCardProps) {
               </div>
             )}
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-1">
-                <Star className="h-4 w-4 fill-primary text-primary hover-scale" />
-                <span className="font-medium">{item.rating.average.toFixed(1)}</span>
-                <span className="text-sm text-muted-foreground">
-                  ({item.rating.count}) {item.rating.average >= 8 ? '🔥' : item.rating.average >= 6 ? '👍' : '😐'}
-                </span>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-1">
+                  <Star className="h-4 w-4 fill-primary text-primary hover-scale" />
+                  <span className="font-medium">{item.rating.average.toFixed(1)}</span>
+                  <span className="text-sm text-muted-foreground">
+                    ({item.rating.count}) {item.rating.average >= 8 ? '🔥' : item.rating.average >= 6 ? '👍' : '😐'}
+                  </span>
+                </div>
+                
+                <div className="flex flex-wrap gap-1">
+                  {(isDorm ? dorm?.tags.slice(0, 2) : fit?.styleTags.slice(0, 2))?.map((tag) => (
+                    <Badge key={tag} variant="outline" className="text-xs hover-scale">
+                      {tag}
+                    </Badge>
+                  ))}
+                  {(isDorm ? (dorm?.tags.length || 0) : (fit?.styleTags.length || 0)) > 2 && (
+                    <Badge variant="outline" className="text-xs hover-scale">
+                      +{(isDorm ? (dorm?.tags.length || 0) : (fit?.styleTags.length || 0)) - 2} more
+                    </Badge>
+                  )}
+                </div>
               </div>
               
-              <div className="flex flex-wrap gap-1">
-                {(isDorm ? dorm?.tags.slice(0, 2) : fit?.styleTags.slice(0, 2))?.map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-xs hover-scale">
-                    {tag}
-                  </Badge>
-                ))}
-                {(isDorm ? (dorm?.tags.length || 0) : (fit?.styleTags.length || 0)) > 2 && (
-                  <Badge variant="outline" className="text-xs hover-scale">
-                    +{(isDorm ? (dorm?.tags.length || 0) : (fit?.styleTags.length || 0)) - 2} more
-                  </Badge>
-                )}
-              </div>
+              <RatingControl
+                itemId={item.id}
+                itemType={isDorm ? 'DORM' : 'FIT'}
+                currentRating={item.rating.average}
+                size="sm"
+                showLabel={false}
+                variant={isDorm ? 'stars' : 'hearts'}
+              />
             </div>
           </div>
         </CardContent>

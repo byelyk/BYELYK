@@ -1,21 +1,147 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, Mail, Instagram, MessageSquare, Calendar, User } from 'lucide-react';
+import { Eye, Mail, Instagram, MessageSquare, Calendar, User, Loader2, Users, BarChart3, Edit, Trash2, Star, Heart, Image as ImageIcon } from 'lucide-react';
 import { getApplications, getApplicationsBySection } from '@/lib/data';
 import { Application } from '@/lib/types';
+import { AdminEditModal } from '@/components/AdminEditModal';
+import { toast } from 'sonner';
 
 export default function AdminPage() {
-  const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
-  const allApplications = getApplications();
-  const dormWarsApplications = getApplicationsBySection('dorm-wars');
-  const fitChecksApplications = getApplicationsBySection('fit-checks');
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [selectedApplication, setSelectedApplication] = useState<any>(null);
+  const [applications, setApplications] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [dorms, setDorms] = useState<any[]>([]);
+  const [fits, setFits] = useState<any[]>([]);
+  const [votes, setVotes] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>({});
+  const [loading, setLoading] = useState(true);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editingType, setEditingType] = useState<'dorm' | 'fit'>('dorm');
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session || session.user?.role !== 'ADMIN') {
+      router.push('/auth/signin');
+      return;
+    }
+
+    // Fetch all admin data
+    Promise.all([
+      fetch('/api/applications').then(res => res.json()),
+      fetch('/api/admin/users').then(res => res.json()),
+      fetch('/api/admin/stats').then(res => res.json()),
+      fetch('/api/admin/dorms').then(res => res.json()),
+      fetch('/api/admin/fits').then(res => res.json()),
+      fetch('/api/admin/votes').then(res => res.json())
+    ])
+    .then(([applicationsData, usersData, statsData, dormsData, fitsData, votesData]) => {
+      setApplications(applicationsData);
+      setUsers(usersData);
+      setStats(statsData);
+      setDorms(dormsData);
+      setFits(fitsData);
+      setVotes(votesData);
+      setLoading(false);
+    })
+    .catch(error => {
+      console.error('Failed to fetch admin data:', error);
+      setLoading(false);
+    });
+  }, [session, status, router]);
+
+  const allApplications = applications;
+  const dormWarsApplications = applications.filter(app => app.section === 'DORM_WARS');
+  const fitChecksApplications = applications.filter(app => app.section === 'FIT_CHECKS');
+
+  const handleEdit = (item: any, type: 'dorm' | 'fit') => {
+    setEditingItem(item);
+    setEditingType(type);
+    setEditModalOpen(true);
+  };
+
+  const handleSave = async (data: any) => {
+    try {
+      const response = await fetch('/api/admin/update-content', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: editingType,
+          id: editingItem?.id,
+          data: data,
+        }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        if (editingType === 'dorm') {
+          setDorms(prev => prev.map(dorm => 
+            dorm.id === editingItem.id ? { ...dorm, ...data } : dorm
+          ));
+        } else if (editingType === 'fit') {
+          setFits(prev => prev.map(fit => 
+            fit.id === editingItem.id ? { ...fit, ...data } : fit
+          ));
+        }
+        
+        toast.success(`${editingType === 'dorm' ? 'Dorm' : 'Fit'} updated successfully!`);
+      } else {
+        toast.error('Failed to update content');
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      toast.error('Failed to update content');
+    }
+  };
+
+  const handleDelete = async (item: any, type: 'dorm' | 'fit') => {
+    if (!confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      // Update local state
+      if (type === 'dorm') {
+        setDorms(prev => prev.filter(dorm => dorm.id !== item.id));
+      } else if (type === 'fit') {
+        setFits(prev => prev.filter(fit => fit.id !== item.id));
+      }
+      
+      toast.success(`${type === 'dorm' ? 'Dorm' : 'Fit'} deleted successfully!`);
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('Failed to delete content');
+    }
+  };
+
+  if (status === 'loading' || loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session || session.user?.role !== 'ADMIN') {
+    return null;
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -27,7 +153,7 @@ export default function AdminPage() {
     });
   };
 
-  const ApplicationCard = ({ application }: { application: Application }) => (
+  const ApplicationCard = ({ application }: { application: any }) => (
     <Card 
       className="cursor-pointer hover:shadow-md transition-shadow"
       onClick={() => setSelectedApplication(application)}
@@ -35,8 +161,8 @@ export default function AdminPage() {
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-semibold">{application.name}</h3>
-          <Badge variant={application.section === 'dorm-wars' ? 'default' : 'secondary'}>
-            {application.section === 'dorm-wars' ? 'Dorm Wars' : 'Fit Checks'}
+          <Badge variant={application.section === 'DORM_WARS' ? 'default' : 'secondary'}>
+            {application.section === 'DORM_WARS' ? 'Dorm Wars' : 'Fit Checks'}
           </Badge>
         </div>
         <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
@@ -75,58 +201,262 @@ export default function AdminPage() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
             <p className="text-muted-foreground">
-              Review and manage applications for Dorm Wars and Fit Checks.
+              Review and manage applications, users, and platform statistics.
             </p>
+          </div>
+
+          {/* Stats Overview */}
+          <div className="grid md:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold text-primary">{stats.totalUsers || 0}</div>
+                <div className="text-sm text-muted-foreground">Total Users</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold text-primary">{stats.totalApplications || 0}</div>
+                <div className="text-sm text-muted-foreground">Applications</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold text-primary">{stats.totalVotes || 0}</div>
+                <div className="text-sm text-muted-foreground">Total Votes</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold text-primary">{stats.pendingApplications || 0}</div>
+                <div className="text-sm text-muted-foreground">Pending Reviews</div>
+              </CardContent>
+            </Card>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Applications List */}
             <div className="lg:col-span-2">
-              <Tabs defaultValue="all" className="space-y-4">
-                <TabsList>
-                  <TabsTrigger value="all">All ({allApplications.length})</TabsTrigger>
-                  <TabsTrigger value="dorm-wars">Dorm Wars ({dormWarsApplications.length})</TabsTrigger>
-                  <TabsTrigger value="fit-checks">Fit Checks ({fitChecksApplications.length})</TabsTrigger>
+              <Tabs defaultValue="applications" className="space-y-4">
+                <TabsList className="grid w-full grid-cols-5">
+                  <TabsTrigger value="applications">Applications ({allApplications.length})</TabsTrigger>
+                  <TabsTrigger value="users">Users ({users.length})</TabsTrigger>
+                  <TabsTrigger value="dorms">Dorms ({dorms.length})</TabsTrigger>
+                  <TabsTrigger value="fits">Fits ({fits.length})</TabsTrigger>
+                  <TabsTrigger value="votes">Votes ({votes.length})</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="all" className="space-y-4">
-                  {allApplications.length === 0 ? (
+                <TabsContent value="applications" className="space-y-4">
+                  <div className="space-y-4">
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">All ({allApplications.length})</Button>
+                      <Button variant="outline" size="sm">Dorm Wars ({dormWarsApplications.length})</Button>
+                      <Button variant="outline" size="sm">Fit Checks ({fitChecksApplications.length})</Button>
+                    </div>
+                    {allApplications.length === 0 ? (
+                      <Card>
+                        <CardContent className="p-8 text-center text-muted-foreground">
+                          No applications submitted yet.
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      allApplications.map((application) => (
+                        <ApplicationCard key={application.id} application={application} />
+                      ))
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="users" className="space-y-4">
+                  {users.length === 0 ? (
                     <Card>
                       <CardContent className="p-8 text-center text-muted-foreground">
-                        No applications submitted yet.
+                        No users found.
                       </CardContent>
                     </Card>
                   ) : (
-                    allApplications.map((application) => (
-                      <ApplicationCard key={application.id} application={application} />
+                    users.map((user) => (
+                      <Card key={user.id}>
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                <User className="h-5 w-5 text-primary" />
+                              </div>
+                              <div>
+                                <h3 className="font-medium">{user.name}</h3>
+                                <p className="text-sm text-muted-foreground">{user.email}</p>
+                                {user.username && (
+                                  <p className="text-xs text-muted-foreground">@{user.username}</p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Badge variant={user.role === 'ADMIN' ? 'default' : 'secondary'}>
+                                {user.role}
+                              </Badge>
+                              <div className="text-xs text-muted-foreground">
+                                Joined {formatDate(user.createdAt)}
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))
                   )}
                 </TabsContent>
 
-                <TabsContent value="dorm-wars" className="space-y-4">
-                  {dormWarsApplications.length === 0 ? (
+                <TabsContent value="dorms" className="space-y-4">
+                  {dorms.length === 0 ? (
                     <Card>
                       <CardContent className="p-8 text-center text-muted-foreground">
-                        No Dorm Wars applications submitted yet.
+                        No dorms found.
                       </CardContent>
                     </Card>
                   ) : (
-                    dormWarsApplications.map((application) => (
-                      <ApplicationCard key={application.id} application={application} />
+                    dorms.map((dorm) => (
+                      <Card key={dorm.id}>
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              <div className="h-16 w-16 bg-muted rounded-lg flex items-center justify-center">
+                                <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                              </div>
+                              <div>
+                                <h3 className="font-medium">{dorm.name}</h3>
+                                <p className="text-sm text-muted-foreground">{dorm.addressOrArea}</p>
+                                <div className="flex items-center space-x-2 mt-1">
+                                  <div className="flex items-center space-x-1">
+                                    <Star className="h-4 w-4 fill-primary text-primary" />
+                                    <span className="text-sm font-medium">{dorm.rating?.average?.toFixed(1) || '0.0'}</span>
+                                    <span className="text-xs text-muted-foreground">({dorm.rating?.count || 0})</span>
+                                  </div>
+                                  <Badge variant="outline" className="text-xs">
+                                    {dorm.type}
+                                  </Badge>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleEdit(dorm, 'dorm')}
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleDelete(dorm, 'dorm')}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))
                   )}
                 </TabsContent>
 
-                <TabsContent value="fit-checks" className="space-y-4">
-                  {fitChecksApplications.length === 0 ? (
+                <TabsContent value="fits" className="space-y-4">
+                  {fits.length === 0 ? (
                     <Card>
                       <CardContent className="p-8 text-center text-muted-foreground">
-                        No Fit Checks applications submitted yet.
+                        No fits found.
                       </CardContent>
                     </Card>
                   ) : (
-                    fitChecksApplications.map((application) => (
-                      <ApplicationCard key={application.id} application={application} />
+                    fits.map((fit) => (
+                      <Card key={fit.id}>
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              <div className="h-16 w-16 bg-muted rounded-lg flex items-center justify-center">
+                                <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                              </div>
+                              <div>
+                                <h3 className="font-medium">@{fit.creator}</h3>
+                                <p className="text-sm text-muted-foreground line-clamp-1">{fit.description}</p>
+                                <div className="flex items-center space-x-2 mt-1">
+                                  <div className="flex items-center space-x-1">
+                                    <Heart className="h-4 w-4 fill-primary text-primary" />
+                                    <span className="text-sm font-medium">{fit.rating?.average?.toFixed(1) || '0.0'}</span>
+                                    <span className="text-xs text-muted-foreground">({fit.rating?.count || 0})</span>
+                                  </div>
+                                  {fit.dorm && (
+                                    <Badge variant="outline" className="text-xs">
+                                      {fit.dorm}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleEdit(fit, 'fit')}
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleDelete(fit, 'fit')}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </TabsContent>
+
+                <TabsContent value="votes" className="space-y-4">
+                  {votes.length === 0 ? (
+                    <Card>
+                      <CardContent className="p-8 text-center text-muted-foreground">
+                        No votes found.
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    votes.map((vote) => (
+                      <Card key={vote.id}>
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                <User className="h-5 w-5 text-primary" />
+                              </div>
+                              <div>
+                                <h3 className="font-medium">{vote.user?.name || 'Unknown User'}</h3>
+                                <p className="text-sm text-muted-foreground">
+                                  Rated {vote.itemType === 'DORM' ? '🏠' : '👗'} {vote.itemId}
+                                </p>
+                                <div className="flex items-center space-x-2 mt-1">
+                                  <div className="flex items-center space-x-1">
+                                    <Star className="h-4 w-4 fill-primary text-primary" />
+                                    <span className="text-sm font-medium">{vote.score}/10</span>
+                                  </div>
+                                  <span className="text-xs text-muted-foreground">
+                                    {formatDate(vote.createdAt)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Badge variant={vote.itemType === 'DORM' ? 'default' : 'secondary'}>
+                                {vote.itemType}
+                              </Badge>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))
                   )}
                 </TabsContent>
@@ -142,8 +472,8 @@ export default function AdminPage() {
                       <User className="h-5 w-5" />
                       {selectedApplication.name}
                     </CardTitle>
-                    <Badge variant={selectedApplication.section === 'dorm-wars' ? 'default' : 'secondary'}>
-                      {selectedApplication.section === 'dorm-wars' ? 'Dorm Wars' : 'Fit Checks'}
+                    <Badge variant={selectedApplication.section === 'DORM_WARS' ? 'default' : 'secondary'}>
+                      {selectedApplication.section === 'DORM_WARS' ? 'Dorm Wars' : 'Fit Checks'}
                     </Badge>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -206,11 +536,11 @@ export default function AdminPage() {
                       </p>
                     </div>
 
-                    {selectedApplication.photoUrls.length > 0 && (
+                    {selectedApplication.photoUrls && selectedApplication.photoUrls !== '[]' && (
                       <div>
                         <h4 className="font-medium mb-2">Photos</h4>
                         <div className="grid grid-cols-2 gap-2">
-                          {selectedApplication.photoUrls.map((url, index) => (
+                          {JSON.parse(selectedApplication.photoUrls).map((url: string, index: number) => (
                             <div key={index} className="aspect-square bg-muted rounded-lg flex items-center justify-center">
                               <Eye className="h-6 w-6 text-muted-foreground" />
                             </div>
@@ -249,6 +579,15 @@ export default function AdminPage() {
       </main>
 
       <Footer />
+
+      {/* Edit Modal */}
+      <AdminEditModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        item={editingItem}
+        type={editingType}
+        onSave={handleSave}
+      />
     </div>
   );
 }
