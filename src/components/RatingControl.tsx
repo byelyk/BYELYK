@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+// // import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Star, Heart, ThumbsUp, LogIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -27,7 +27,8 @@ export function RatingControl({
   showLabel = true,
   variant = 'stars'
 }: RatingControlProps) {
-  const { data: session, status } = useSession();
+  const session = null; // No authentication for now
+  const status = 'unauthenticated';
   const [hoveredRating, setHoveredRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [justRated, setJustRated] = useState(false);
@@ -35,7 +36,7 @@ export function RatingControl({
 
   // Fetch user's current rating
   useEffect(() => {
-    if (session?.user?.id) {
+    if ((session as any)?.user?.id) {
       fetch(`/api/votes?itemId=${itemId}&itemType=${itemType}`)
         .then(res => res.json())
         .then(data => {
@@ -45,10 +46,10 @@ export function RatingControl({
         })
         .catch(console.error);
     }
-  }, [itemId, itemType, session?.user?.id]);
+  }, [itemId, itemType, (session as any)?.user?.id]);
 
   const handleRate = async (rating: number) => {
-    if (disabled || isSubmitting || !session?.user?.id) return;
+    if (disabled || isSubmitting || !(session as any)?.user?.id) return;
     
     setIsSubmitting(true);
     setJustRated(true);
@@ -111,7 +112,7 @@ export function RatingControl({
 
   const Icon = getIcon();
 
-  if (status === 'loading') {
+  if (false) { // No loading state for now
     return (
       <div className="flex items-center justify-center space-x-1">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (

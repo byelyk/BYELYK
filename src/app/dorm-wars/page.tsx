@@ -7,7 +7,7 @@ import { FilterBar } from '@/components/FilterBar';
 import { ItemCard } from '@/components/ItemCard';
 import { Leaderboard } from '@/components/Leaderboard';
 import { ApplyCTA } from '@/components/ApplyCTA';
-import { getDorms, HALL_OPTIONS, TYPE_OPTIONS, TAG_OPTIONS } from '@/lib/data';
+import { getDorms, BUILDING_OPTIONS, TYPE_OPTIONS, TAG_OPTIONS } from '@/lib/data';
 import { Dorm } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 
@@ -86,8 +86,8 @@ export default function DormWarsPage() {
                 onSearchChange={setSearchQuery}
                 selectedFilters={selectedHalls}
                 onFilterChange={setSelectedHalls}
-                filterOptions={HALL_OPTIONS}
-                filterLabel="Halls"
+                filterOptions={BUILDING_OPTIONS}
+                filterLabel="Buildings"
                 placeholder="Search dorms..."
               />
             </div>

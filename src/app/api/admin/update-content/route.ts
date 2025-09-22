@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-//import { getServerSession } from 'next-auth/next';
-import { getSessionUser } from '@/lib/auth';
+//import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth';
+
 import { prisma } from '@/lib/db';
 
 export async function PUT(request: NextRequest) {
   try {
-    const user = await getSessionUser(request);
+    const session = await auth();
     
-    if (!user?.id || user?.role !== 'ADMIN') {
+    if (!(session as any)?.user?.id || (session as any)?.user?.role !== 'ADMIN') {
       return NextResponse.json(
         { message: 'Admin access required' },
         { status: 403 }

@@ -5,15 +5,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { useSession, signOut } from 'next-auth/react';
+// import { useSession, signOut } from 'next-auth/react';
 import { toast } from 'sonner';
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session } = useSession();
+  const session = null; // No authentication for now
 
-  const handleSignOut = () => {
-    signOut();
+  const handleSignOut = async () => {
     toast.success('Signed out successfully');
   };
 
@@ -50,7 +49,7 @@ export function NavBar() {
             >
               Apply
             </Link>
-            {(session?.user as any)?.role === 'ADMIN' && (
+            {((session as any)?.user as any)?.role === 'ADMIN' && (
               <Link 
                 href="/admin" 
                 className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-1"
@@ -64,8 +63,8 @@ export function NavBar() {
                 <Link href="/profile">
                   <Button variant="ghost" size="sm">
                     <User className="h-4 w-4 mr-2" />
-                    {session.user?.name}
-                    {(session.user as any)?.role === 'ADMIN' && (
+                    {(session as any)?.user?.name}
+                    {((session as any)?.user as any)?.role === 'ADMIN' && (
                       <span className="ml-2 text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
                         Admin
                       </span>
@@ -122,7 +121,7 @@ export function NavBar() {
               >
                 Apply
               </Link>
-              {(session?.user as any)?.role === 'ADMIN' && (
+              {((session as any)?.user as any)?.role === 'ADMIN' && (
                 <Link 
                   href="/admin" 
                   className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-2"
@@ -135,8 +134,8 @@ export function NavBar() {
                 <div className="flex items-center justify-between pt-4 border-t">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4" />
-                    <span className="text-sm">{session.user?.name}</span>
-                    {(session.user as any)?.role === 'ADMIN' && (
+                    <span className="text-sm">{(session as any)?.user?.name}</span>
+                    {((session as any)?.user as any)?.role === 'ADMIN' && (
                       <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
                         Admin
                       </span>

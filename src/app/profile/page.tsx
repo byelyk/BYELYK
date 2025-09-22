@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+// import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
@@ -12,14 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Star, Calendar, Mail, Instagram, Loader2, Edit, Settings } from 'lucide-react';
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession();
+  const session = null; const status = 'unauthenticated';
   const router = useRouter();
   const [userVotes, setUserVotes] = useState<any[]>([]);
   const [userApplications, setUserApplications] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
-    if (status === 'loading') return;
+    if (false) // No loading state for now return;
     
     if (!session) {
       router.push('/auth/signin');
@@ -34,15 +34,15 @@ export default function ProfilePage() {
     .then(([votes, applications]) => {
       setUserVotes(votes);
       setUserApplications(applications);
-      setLoading(false);
+      setDataLoading(false);
     })
     .catch(error => {
       console.error('Failed to fetch user data:', error);
-      setLoading(false);
+      setDataLoading(false);
     });
   }, [session, status, router]);
 
-  if (status === 'loading' || loading) {
+  if (dataLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex items-center gap-2">
@@ -90,9 +90,9 @@ export default function ProfilePage() {
                     <User className="h-8 w-8 text-primary" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold">{session.user?.name}</h1>
-                    <p className="text-muted-foreground">{session.user?.email}</p>
-                    {(session.user as any)?.role === 'ADMIN' && (
+                    <h1 className="text-2xl font-bold">{(session as any)?.user?.name}</h1>
+                    <p className="text-muted-foreground">{(session as any)?.user?.email}</p>
+                    {((session as any)?.user as any)?.role === 'ADMIN' && (
                       <Badge variant="default" className="mt-1">
                         Admin
                       </Badge>

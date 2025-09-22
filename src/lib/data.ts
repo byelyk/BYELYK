@@ -1,169 +1,115 @@
 import { Dorm, Fit, Application, DormFilters, FitFilters } from './types';
 import { prisma } from './db';
 
-// UH Housing Seed Data
+// Individual Dorm Rooms Seed Data
 const seedDorms: Dorm[] = [
   {
-    id: 'cvi',
-    name: 'Cougar Village I',
+    id: 'chris-dorm',
+    name: "Chris's Dorm",
     hall: 'Cougar Village I',
     type: 'residence-hall',
     classEligibility: 'first-year-only',
-    roomTypes: ['Double', 'Single'],
-    description: 'First-year only residence hall with doubles and singles. Features LLCs (Living Learning Communities) and is known for its social atmosphere. Close to dining halls and the Student Center.',
+    roomTypes: ['Double'],
+    description: 'Chris has an amazing setup with LED lights, gaming setup, and great organization. Perfect for studying and hanging out.',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Cougar Village I exterior' },
-      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'CVI double room' },
-      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'CVI common area' }
+      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Chris dorm room view' },
+      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Chris gaming setup' },
+      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Chris study area' }
     ],
-    amenities: ['Laundry', 'Study Rooms', 'Dining Hall Access', 'LLCs', 'Community Bathrooms'],
-    addressOrArea: 'Central Campus',
-    rating: { average: 7.2, count: 45 },
-    tags: ['freshman', 'community-bath', 'social', 'near dining hall', 'LLCs']
+    amenities: ['LED Lights', 'Gaming Setup', 'Study Space', 'Clean Organization'],
+    addressOrArea: 'Room 201',
+    rating: { average: 8.5, count: 23 },
+    tags: ['gaming', 'led-lights', 'organized', 'study-friendly', 'social']
   },
   {
-    id: 'cvii',
-    name: 'Cougar Village II',
+    id: 'april-dorm',
+    name: "April's Dorm",
     hall: 'Cougar Village II',
     type: 'residence-hall',
     classEligibility: 'first-year-only',
-    roomTypes: ['Double', 'Single'],
-    description: 'First-year residence hall with modern amenities. Similar to CVI but with updated facilities. Great for students who want the traditional dorm experience with a bit more privacy.',
+    roomTypes: ['Single'],
+    description: 'April has created a cozy, minimalist space with plants and fairy lights. Perfect for studying and relaxing.',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Cougar Village II exterior' },
-      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'CVII room interior' },
-      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'CVII study lounge' }
+      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'April dorm room view' },
+      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'April study corner' },
+      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'April room decor' }
     ],
-    amenities: ['Laundry', 'Study Rooms', 'Dining Hall Access', 'Community Bathrooms'],
-    addressOrArea: 'Central Campus',
-    rating: { average: 7.8, count: 38 },
-    tags: ['freshman', 'community-bath', 'social', 'near dining hall']
+    amenities: ['Plants', 'Fairy Lights', 'Study Desk', 'Cozy Vibes'],
+    addressOrArea: 'Room 305',
+    rating: { average: 9.2, count: 31 },
+    tags: ['minimalist', 'plants', 'cozy', 'study-friendly', 'aesthetic']
   },
   {
-    id: 'moody-towers',
-    name: 'Moody Towers',
+    id: 'mike-dorm',
+    name: "Mike's Dorm",
     hall: 'Moody Towers',
     type: 'residence-hall',
     classEligibility: 'sophomore-plus',
-    roomTypes: ['Double', 'Single'],
-    description: 'Twin towers housing both first-year and upper-class students. Features an on-site dining hall and is centrally located. Known for its convenience and social opportunities.',
+    roomTypes: ['Double'],
+    description: 'Mike has an awesome sports-themed room with memorabilia and a mini fridge. Great for hanging out with friends.',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Moody Towers exterior' },
-      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Moody Towers room' },
-      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Moody dining hall' }
+      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Mike dorm room view' },
+      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Mike sports corner' },
+      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Mike hangout area' }
     ],
-    amenities: ['Laundry', 'Study Rooms', 'Dining Hall', 'Community Bathrooms', 'Central Location'],
-    addressOrArea: 'Central Campus',
-    rating: { average: 8.1, count: 52 },
-    tags: ['mixed-class', 'community-bath', 'near dining hall', 'central', 'social']
+    amenities: ['Sports Memorabilia', 'Mini Fridge', 'TV Setup', 'Comfortable Seating'],
+    addressOrArea: 'Room 412',
+    rating: { average: 7.8, count: 19 },
+    tags: ['sports', 'hangout', 'social', 'comfortable', 'entertainment']
   },
   {
-    id: 'the-quad',
-    name: 'The Quad',
+    id: 'sarah-dorm',
+    name: "Sarah's Dorm",
     hall: 'The Quad',
     type: 'apartment',
     classEligibility: 'sophomore-plus',
-    roomTypes: ['2x2', '4x2'],
-    description: 'Suite-style living for sophomores and above. Features shared common areas and private bedrooms. Great for students who want more independence while staying on campus.',
+    roomTypes: ['2x2'],
+    description: 'Sarah has transformed her space into a creative studio with art supplies and inspiration boards. Perfect for artistic students.',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'The Quad exterior' },
-      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Quad suite common area' },
-      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Quad bedroom' }
+      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Sarah dorm room view' },
+      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Sarah art corner' },
+      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Sarah creative space' }
     ],
-    amenities: ['Laundry', 'Kitchen', 'Private Bathrooms', 'Study Spaces', 'Living Room'],
-    addressOrArea: 'Central Campus',
-    rating: { average: 8.5, count: 41 },
-    tags: ['sophomore+', 'suite', 'private-bath', 'kitchen', 'independent']
+    amenities: ['Art Supplies', 'Inspiration Boards', 'Creative Space', 'Good Lighting'],
+    addressOrArea: 'Suite 2B',
+    rating: { average: 8.9, count: 27 },
+    tags: ['artistic', 'creative', 'inspiring', 'organized', 'unique']
   },
   {
-    id: 'cougar-place',
-    name: 'Cougar Place',
+    id: 'alex-dorm',
+    name: "Alex's Dorm",
     hall: 'Cougar Place',
     type: 'apartment',
     classEligibility: 'sophomore-plus',
-    roomTypes: ['1x1', '2x2', '4x2'],
-    description: 'Apartment-style living with various configurations. Hosts special communities and offers more privacy. Great for upperclassmen who want apartment-style living on campus.',
+    roomTypes: ['1x1'],
+    description: 'Alex has a tech-focused setup with multiple monitors and a standing desk. Perfect for computer science students.',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Cougar Place exterior' },
-      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Cougar Place apartment' },
-      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Cougar Place kitchen' }
+      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Alex dorm room view' },
+      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Alex tech setup' },
+      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Alex workspace' }
     ],
-    amenities: ['Laundry', 'Kitchen', 'Private Bathrooms', 'Study Spaces', 'Special Communities'],
-    addressOrArea: 'Central Campus',
-    rating: { average: 8.7, count: 33 },
-    tags: ['sophomore+', 'apartment', 'private-bath', 'kitchen', 'special-communities']
+    amenities: ['Multiple Monitors', 'Standing Desk', 'Tech Setup', 'Cable Management'],
+    addressOrArea: 'Apt 3C',
+    rating: { average: 8.6, count: 24 },
+    tags: ['tech', 'productive', 'modern', 'organized', 'professional']
   },
   {
-    id: 'university-lofts',
-    name: 'University Lofts',
+    id: 'jessica-dorm',
+    name: "Jessica's Dorm",
     hall: 'University Lofts',
     type: 'loft',
     classEligibility: 'upper-class',
-    roomTypes: ['1x1', '2x2'],
-    description: 'Modern loft-style apartments for upper-class students. Features contemporary design and premium amenities. Perfect for students who want a more upscale living experience.',
+    roomTypes: ['1x1'],
+    description: 'Jessica has created a luxurious space with premium furniture and elegant decor. Perfect for students who love sophistication.',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'University Lofts exterior' },
-      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Loft interior' },
-      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Loft kitchen' }
+      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Jessica dorm room view' },
+      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Jessica elegant corner' },
+      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Jessica luxury setup' }
     ],
-    amenities: ['Laundry', 'Kitchen', 'Private Bathrooms', 'Modern Design', 'Premium Features'],
-    addressOrArea: 'Central Campus',
-    rating: { average: 9.1, count: 28 },
-    tags: ['upper-class', 'loft', 'private-bath', 'premium', 'modern']
-  },
-  {
-    id: 'bayou-oaks',
-    name: 'Bayou Oaks',
-    hall: 'Bayou Oaks',
-    type: 'apartment',
-    classEligibility: 'sophomore-plus',
-    roomTypes: ['2x2', '4x2'],
-    description: 'Townhouse-style apartments near Greek life. Offers a more independent living experience while staying connected to campus. Great for students involved in Greek life or who want more space.',
-    photos: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Bayou Oaks exterior' },
-      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Bayou Oaks townhouse' },
-      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Bayou Oaks living area' }
-    ],
-    amenities: ['Laundry', 'Kitchen', 'Private Bathrooms', 'More Space', 'Greek Life Proximity'],
-    addressOrArea: 'South Campus',
-    rating: { average: 8.3, count: 29 },
-    tags: ['sophomore+', 'apartment', 'private-bath', 'Greek-adjacent', 'spacious']
-  },
-  {
-    id: 'cambridge-oaks',
-    name: 'Cambridge Oaks',
-    hall: 'Cambridge Oaks',
-    type: 'apartment',
-    classEligibility: 'sophomore-plus',
-    roomTypes: ['Studio', '1x1', '2x2'],
-    description: 'Affiliated off-campus apartments managed by CLV. Offers studio and apartment options with modern amenities. Great for students who want off-campus living with campus convenience.',
-    photos: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Cambridge Oaks exterior' },
-      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Cambridge Oaks studio' },
-      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Cambridge Oaks amenities' }
-    ],
-    amenities: ['Laundry', 'Kitchen', 'Private Bathrooms', 'Pool', 'Fitness Center', 'Off-Campus'],
-    addressOrArea: 'Off-Campus',
-    rating: { average: 7.9, count: 22 },
-    tags: ['sophomore+', 'apartment', 'private-bath', 'off-campus', 'amenities']
-  },
-  {
-    id: 'cullen-oaks',
-    name: 'Cullen Oaks',
-    hall: 'Cullen Oaks',
-    type: 'apartment',
-    classEligibility: 'sophomore-plus',
-    roomTypes: ['1x1', '2x2', '3x2', '4x2'],
-    description: 'Affiliated apartments managed by ACC. Offers various bedroom configurations with full apartment amenities. Perfect for students who want apartment living with campus resources.',
-    photos: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', alt: 'Cullen Oaks exterior' },
-      { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop', alt: 'Cullen Oaks apartment' },
-      { url: 'https://images.unsplash.com/photo-1555854877-bab0ef4c7c9e?w=800&h=600&fit=crop', alt: 'Cullen Oaks living space' }
-    ],
-    amenities: ['Laundry', 'Kitchen', 'Private Bathrooms', 'Pool', 'Fitness Center', 'Study Rooms'],
-    addressOrArea: 'Off-Campus',
-    rating: { average: 8.0, count: 31 },
-    tags: ['sophomore+', 'apartment', 'private-bath', 'off-campus', 'amenities', 'flexible-options']
+    amenities: ['Premium Furniture', 'Elegant Decor', 'Luxury Bedding', 'Sophisticated Design'],
+    addressOrArea: 'Loft 5A',
+    rating: { average: 9.4, count: 18 },
+    tags: ['luxury', 'elegant', 'sophisticated', 'premium', 'upscale']
   }
 ];
 
@@ -231,8 +177,9 @@ const seedFits: Fit[] = [
 ];
 
 // Initialize data
-dorms = [...seedDorms];
-fits = [...seedFits];
+const dorms: Dorm[] = [...seedDorms];
+const fits: Fit[] = [...seedFits];
+const applications: Application[] = [];
 
 // Service functions
 export async function getDorms(filters?: DormFilters): Promise<Dorm[]> {
@@ -273,12 +220,23 @@ export async function getDorms(filters?: DormFilters): Promise<Dorm[]> {
         filteredDorms = filteredDorms.filter(dorm => 
           dorm.name.toLowerCase().includes(query) ||
           (dorm.description && dorm.description.toLowerCase().includes(query)) ||
-          dorm.tags.some(tag => tag.toLowerCase().includes(query))
+          dorm.tags.some((tag: string) => tag.toLowerCase().includes(query))
         );
       }
     }
 
-    return filteredDorms.sort((a, b) => b.rating.average - a.rating.average);
+    return filteredDorms.map(dorm => ({
+      ...dorm,
+      hall: dorm.name,
+      classEligibility: 'sophomore-plus' as const,
+      roomTypes: ['Double', 'Single'],
+      amenities: ['Laundry', 'Study Rooms'],
+      photos: JSON.parse(dorm.photos || '[]'),
+      tags: JSON.parse(dorm.tags || '[]'),
+      rating: typeof dorm.rating === 'object' ? dorm.rating : { average: 0, count: 0 },
+      type: (dorm.type as 'residence-hall' | 'apartment' | 'loft') || 'residence-hall',
+      description: dorm.description || ''
+    })).sort((a, b) => b.rating.average - a.rating.average);
   } catch (error) {
     console.error('Error fetching dorms:', error);
     return [];
@@ -315,12 +273,15 @@ export async function getFits(filters?: FitFilters): Promise<Fit[]> {
         filteredFits = filteredFits.filter(fit => 
           fit.creator.toLowerCase().includes(query) ||
           fit.description.toLowerCase().includes(query) ||
-          fit.styleTags.some(tag => tag.toLowerCase().includes(query))
+          fit.styleTags.some((tag: string) => tag.toLowerCase().includes(query))
         );
       }
     }
 
-    return filteredFits.sort((a, b) => b.rating.average - a.rating.average);
+    return filteredFits.map(fit => ({
+      ...fit,
+      dorm: fit.dorm || undefined
+    })).sort((a, b) => b.rating.average - a.rating.average);
   } catch (error) {
     console.error('Error fetching fits:', error);
     return [];
@@ -337,9 +298,15 @@ export async function getDormById(id: string): Promise<Dorm | undefined> {
 
     return {
       ...dorm,
+      hall: dorm.addressOrArea.split(' • ')[0] || dorm.addressOrArea,
+      classEligibility: 'sophomore-plus' as const,
+      roomTypes: ['Double', 'Single'],
+      amenities: ['Laundry', 'Study Rooms'],
       photos: JSON.parse(dorm.photos || '[]'),
       tags: JSON.parse(dorm.tags || '[]'),
-      rating: dorm.rating as { average: number; count: number }
+      rating: dorm.rating as { average: number; count: number },
+      description: dorm.description || '',
+      type: (dorm.type as 'residence-hall' | 'apartment' | 'loft') || 'residence-hall'
     };
   } catch (error) {
     console.error('Error fetching dorm by ID:', error);
@@ -359,7 +326,8 @@ export async function getFitById(id: string): Promise<Fit | undefined> {
       ...fit,
       photos: JSON.parse(fit.photos || '[]'),
       styleTags: JSON.parse(fit.styleTags || '[]'),
-      rating: fit.rating as { average: number; count: number }
+      rating: fit.rating as { average: number; count: number },
+      dorm: fit.dorm || undefined
     };
   } catch (error) {
     console.error('Error fetching fit by ID:', error);
@@ -410,10 +378,10 @@ export function getApplicationsBySection(section: 'dorm-wars' | 'fit-checks'): A
   return applications.filter(app => app.section === section);
 }
 
-// Filter options
-export const HALL_OPTIONS = [
-  'Cougar Village I',
-  'Cougar Village II', 
+// Building options for individual dorms
+export const BUILDING_OPTIONS = [
+  'CV1 (Cougar Village I)',
+  'CV2 (Cougar Village II)', 
   'Moody Towers',
   'The Quad',
   'Cougar Place',

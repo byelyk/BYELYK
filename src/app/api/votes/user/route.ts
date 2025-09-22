@@ -1,13 +1,14 @@
-import { NextResponse } from 'next/server';
-//import { getServerSession } from 'next-auth/next';
-import { getSessionUser } from '@/lib/auth';
+import { NextRequest, NextResponse } from 'next/server';
+//import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth';
+
 import { prisma } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getSessionUser(request);
+    const session = await auth();
     
-    if (!user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json(
         { message: 'Authentication required' },
         { status: 401 }
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     const votes = await prisma.vote.findMany({
       where: {
-        userId: session.user.id,
+        userId: (session as any)?.user?.id || 'demo-user',
       },
       orderBy: {
         createdAt: 'desc',

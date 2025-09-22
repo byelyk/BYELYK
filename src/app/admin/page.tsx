@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
@@ -9,13 +8,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, Mail, Instagram, MessageSquare, Calendar, User, Loader2, Edit, Trash2, Star, Heart, Image as ImageIcon } from 'lucide-react';
+import { Eye, Mail, Instagram, MessageSquare, Calendar, User, Loader2, Edit, Trash2, Star, Heart, Image as ImageIcon, LogOut, Plus } from 'lucide-react';
 import { AdminEditModal } from '@/components/AdminEditModal';
+import { AddDormForm } from '@/components/AddDormForm';
 import { toast } from 'sonner';
 
 export default function AdminPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedApplication, setSelectedApplication] = useState<any>(null);
   const [applications, setApplications] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
@@ -23,46 +24,56 @@ export default function AdminPage() {
   const [fits, setFits] = useState<any[]>([]);
   const [votes, setVotes] = useState<any[]>([]);
   const [stats, setStats] = useState<any>({});
-  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [editingType, setEditingType] = useState<'dorm' | 'fit'>('dorm');
+  const [addDormModalOpen, setAddDormModalOpen] = useState(false);
 
   useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (!session || (session.user as any)?.role !== 'ADMIN') {
-      router.push('/auth/signin');
-      return;
-    }
+    // Check admin status
+    fetch('/api/admin/check')
+      .then(res => res.json())
+      .then(data => {
+        if (data.isAdmin) {
+          setIsAdmin(true);
+          // Fetch all admin data
+          return Promise.all([
+            fetch('/api/applications').then(res => res.json()),
+            fetch('/api/admin/users').then(res => res.json()),
+            fetch('/api/admin/stats').then(res => res.json()),
+            fetch('/api/admin/dorms').then(res => res.json()),
+            fetch('/api/admin/fits').then(res => res.json()),
+            fetch('/api/admin/votes').then(res => res.json())
+          ]);
+        } else {
+          router.push('/admin/login');
+          return null;
+        }
+      })
+      .then(data => {
+        if (data) {
+          const [applicationsData, usersData, statsData, dormsData, fitsData, votesData] = data;
+          setApplications(applicationsData);
+          setUsers(usersData);
+          setStats(statsData);
+          setDorms(dormsData);
+          setFits(fitsData);
+          setVotes(votesData);
+          setDataLoading(false);
+        }
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Failed to fetch admin data:', error);
+        setLoading(false);
+        router.push('/admin/login');
+      });
+  }, [router]);
 
-    // Fetch all admin data
-    Promise.all([
-      fetch('/api/applications').then(res => res.json()),
-      fetch('/api/admin/users').then(res => res.json()),
-      fetch('/api/admin/stats').then(res => res.json()),
-      fetch('/api/admin/dorms').then(res => res.json()),
-      fetch('/api/admin/fits').then(res => res.json()),
-      fetch('/api/admin/votes').then(res => res.json())
-    ])
-    .then(([applicationsData, usersData, statsData, dormsData, fitsData, votesData]) => {
-      setApplications(applicationsData);
-      setUsers(usersData);
-      setStats(statsData);
-      setDorms(dormsData);
-      setFits(fitsData);
-      setVotes(votesData);
-      setLoading(false);
-    })
-    .catch(error => {
-      console.error('Failed to fetch admin data:', error);
-      setLoading(false);
-    });
-  }, [session, status, router]);
-
-  const allApplications = applications;
-  const dormWarsApplications = applications.filter(app => app.section === 'DORM_WARS');
-  const fitChecksApplications = applications.filter(app => app.section === 'FIT_CHECKS');
+  const allApplications = Array.isArray(applications) ? applications : [];
+  const dormWarsApplications = allApplications.filter(app => app.section === 'DORM_WARS');
+  const fitChecksApplications = allApplications.filter(app => app.section === 'FIT_CHECKS');
 
   const handleEdit = (item: any, type: 'dorm' | 'fit') => {
     setEditingItem(item);
@@ -126,7 +137,24 @@ export default function AdminPage() {
     }
   };
 
-  if (status === 'loading' || loading) {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST' });
+      router.push('/admin/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const handleDormAdded = () => {
+    // Refresh dorms data
+    fetch('/api/admin/dorms')
+      .then(res => res.json())
+      .then(data => setDorms(data))
+      .catch(error => console.error('Failed to refresh dorms:', error));
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex items-center gap-2">
@@ -137,7 +165,7 @@ export default function AdminPage() {
     );
   }
 
-  if (!session || (session.user as any)?.role !== 'ADMIN') {
+  if (!isAdmin) {
     return null;
   }
 
@@ -196,11 +224,17 @@ export default function AdminPage() {
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-            <p className="text-muted-foreground">
-              Review and manage applications, users, and platform statistics.
-            </p>
+          <div className="mb-8 flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+              <p className="text-muted-foreground">
+                Review and manage applications, users, and platform statistics.
+              </p>
+            </div>
+            <Button variant="outline" onClick={handleLogout} className="flex items-center gap-2">
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
           </div>
 
           {/* Stats Overview */}
@@ -304,14 +338,21 @@ export default function AdminPage() {
                 </TabsContent>
 
                 <TabsContent value="dorms" className="space-y-4">
-                  {dorms.length === 0 ? (
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Individual Dorm Rooms</h3>
+                    <Button onClick={() => setAddDormModalOpen(true)} className="flex items-center gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add Dorm
+                    </Button>
+                  </div>
+                  {(!Array.isArray(dorms) || dorms.length === 0) ? (
                     <Card>
                       <CardContent className="p-8 text-center text-muted-foreground">
-                        No dorms found.
+                        No dorms found. Add the first dorm room!
                       </CardContent>
                     </Card>
                   ) : (
-                    dorms.map((dorm) => (
+                    (dorms as any[]).map((dorm) => (
                       <Card key={dorm.id}>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
@@ -359,14 +400,14 @@ export default function AdminPage() {
                 </TabsContent>
 
                 <TabsContent value="fits" className="space-y-4">
-                  {fits.length === 0 ? (
+                  {(!Array.isArray(fits) || fits.length === 0) ? (
                     <Card>
                       <CardContent className="p-8 text-center text-muted-foreground">
                         No fits found.
                       </CardContent>
                     </Card>
                   ) : (
-                    fits.map((fit) => (
+                    (fits as any[]).map((fit) => (
                       <Card key={fit.id}>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
@@ -586,6 +627,14 @@ export default function AdminPage() {
         type={editingType}
         onSave={handleSave}
       />
+
+      {/* Add Dorm Modal */}
+      {addDormModalOpen && (
+        <AddDormForm
+          onClose={() => setAddDormModalOpen(false)}
+          onDormAdded={handleDormAdded}
+        />
+      )}
     </div>
   );
 }

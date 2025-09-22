@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+// import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Upload, X, CheckCircle, LogIn } from 'lucide-react';
-import { HALL_OPTIONS } from '@/lib/data';
+import { BUILDING_OPTIONS } from '@/lib/data';
 import { track, ANALYTICS_EVENTS } from '@/lib/analytics';
 import Link from 'next/link';
 
@@ -33,7 +33,7 @@ interface ApplicationFormProps {
 }
 
 export function ApplicationForm({ section }: ApplicationFormProps) {
-  const { data: session, status } = useSession();
+  const session = null; const status = 'unauthenticated';
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -48,7 +48,7 @@ export function ApplicationForm({ section }: ApplicationFormProps) {
   });
 
   const onSubmit = async (data: ApplicationFormData) => {
-    if (!session?.user?.id) return;
+    if (!(session as any)?.user?.id) return;
     
     setIsSubmitting(true);
     try {
@@ -96,7 +96,7 @@ export function ApplicationForm({ section }: ApplicationFormProps) {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  if (status === 'loading') {
+  if (false) { // No loading state for now
     return (
       <Card className="max-w-2xl mx-auto">
         <CardContent className="p-8 text-center">
@@ -211,9 +211,9 @@ export function ApplicationForm({ section }: ApplicationFormProps) {
                   <SelectValue placeholder="Select your dorm or hall" />
                 </SelectTrigger>
                 <SelectContent>
-                  {HALL_OPTIONS.map((hall) => (
-                    <SelectItem key={hall} value={hall}>
-                      {hall}
+                  {BUILDING_OPTIONS.map((building) => (
+                    <SelectItem key={building} value={building}>
+                      {building}
                     </SelectItem>
                   ))}
                 </SelectContent>

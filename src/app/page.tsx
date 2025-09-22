@@ -26,12 +26,12 @@ export default async function Home() {
             <div className="text-center mb-12">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Trophy className="h-6 w-6 text-primary animate-bounce-slow" />
-                <h2 className="text-3xl font-bold gradient-text">Recent Winners</h2>
+                <h2 className="text-3xl font-bold gradient-text">Top Dorm Rooms</h2>
                 <Trophy className="h-6 w-6 text-primary animate-bounce-slow" style={{ animationDelay: '0.5s' }} />
               </div>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Check out the highest-rated dorms and most stylish fits from our amazing community! 
-                These legends are setting the bar high!
+                Check out the highest-rated individual dorm rooms from our amazing students! 
+                See how they&apos;ve transformed their spaces!
               </p>
             </div>
 
@@ -41,7 +41,7 @@ export default async function Home() {
                 <div className="flex items-center gap-2 mb-6">
                   <Award className="h-5 w-5 text-primary animate-pulse" />
                   <h3 className="text-xl font-semibold flex items-center gap-2">
-                    Top Dorms 
+                    Best Dorm Rooms 
                     <Flame className="h-4 w-4 text-orange-500" />
                   </h3>
                 </div>
@@ -58,7 +58,7 @@ export default async function Home() {
                             </div>
                             <div>
                               <h4 className="font-medium">{dorm.name}</h4>
-                              <p className="text-sm text-muted-foreground">{dorm.addressOrArea}</p>
+                              <p className="text-sm text-muted-foreground">{dorm.hall} • {dorm.addressOrArea}</p>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">

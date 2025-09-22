@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-//import { getServerSession } from 'next-auth/next';
-import { getSessionUser } from '@/lib/auth';
+//import { auth } from '@/lib/auth';
+import { cookies } from 'next/headers';
+
 import { prisma } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getSessionUser(request);
-    
-    if (!user?.id) {
+    const cookieStore = await cookies();
+    const adminSession = cookieStore.get('admin-session');
+    if (!adminSession || adminSession.value !== 'true') {
       return NextResponse.json(
-        { message: 'Authentication required' },
-        { status: 401 }
+        { message: 'Admin access required' },
+        { status: 403 }
       );
     }
 
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const application = await prisma.application.create({
       data: {
-        userId: session.user.id,
+        userId: 'admin',
         section: section as 'DORM_WARS' | 'FIT_CHECKS',
         name,
         email: email || null,
@@ -50,12 +51,12 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getSessionUser(request);
-    
-    if (!user?.id) {
+    const cookieStore = await cookies();
+    const adminSession = cookieStore.get('admin-session');
+    if (!adminSession || adminSession.value !== 'true') {
       return NextResponse.json(
-        { message: 'Authentication required' },
-        { status: 401 }
+        { message: 'Admin access required' },
+        { status: 403 }
       );
     }
 

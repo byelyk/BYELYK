@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-//import { getServerSession } from 'next-auth/next';
-import { getSessionUser } from '@/lib/auth';
+//import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth';
+
 import { prisma } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getSessionUser(request);
+    const session = await auth();
     
-    if (!user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json(
         { message: 'Authentication required' },
         { status: 401 }
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
     const vote = await prisma.vote.upsert({
       where: {
         userId_itemId_itemType: {
-          userId: session.user.id,
+          userId: (session as any)?.user?.id || 'demo-user',
           itemId,
           itemType: itemType as 'DORM' | 'FIT',
         },
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
         score,
       },
       create: {
-        userId: session.user.id,
+        userId: (session as any)?.user?.id || 'demo-user',
         itemId,
         itemType: itemType as 'DORM' | 'FIT',
         score,
@@ -69,9 +70,9 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getSessionUser(request);
+    const session = await auth();
     
-    if (!user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json(
         { message: 'Authentication required' },
         { status: 401 }
@@ -92,7 +93,7 @@ export async function GET(request: NextRequest) {
     const vote = await prisma.vote.findUnique({
       where: {
         userId_itemId_itemType: {
-          userId: session.user.id,
+          userId: (session as any)?.user?.id || 'demo-user',
           itemId,
           itemType: itemType as 'DORM' | 'FIT',
         },
