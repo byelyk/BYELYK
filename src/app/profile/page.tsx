@@ -69,11 +69,11 @@ export default function ProfilePage() {
   };
 
   const getRatingEmoji = (score: number) => {
-    if (score >= 9) return '🔥';
-    if (score >= 7) return '😍';
-    if (score >= 5) return '😊';
-    if (score >= 3) return '😐';
-    return '😔';
+    if (score >= 9) return 'Hot';
+    if (score >= 7) return 'Love';
+    if (score >= 5) return 'Good';
+    if (score >= 3) return 'OK';
+    return 'Poor';
   };
 
   return (
@@ -155,7 +155,7 @@ export default function ProfilePage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="font-medium">
-                            {vote.itemType === 'DORM' ? '🏠' : '👗'} {vote.itemId}
+                            {vote.itemType === 'DORM' ? 'Dorm' : 'Fit'} {vote.itemId}
                           </h3>
                           <p className="text-sm text-muted-foreground">
                             Rated on {formatDate(vote.createdAt)}
@@ -200,7 +200,7 @@ export default function ProfilePage() {
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">
-                        {application.section === 'DORM_WARS' ? '🏠 Dorm Wars' : '👗 Fit Checks'}
+                        {application.section === 'DORM_WARS' ? 'Dorm Wars' : 'Fit Checks'}
                       </p>
                       <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                         {application.message}

@@ -102,12 +102,12 @@ export function RatingControl({
 
   const getRatingText = (rating: number) => {
     if (variant === 'hearts') {
-      const texts = ['', '💔', '😔', '😐', '😊', '😍', '🥰', '😘', '💕', '💖', '💝'];
+      const texts = ['', 'Hate', 'Dislike', 'OK', 'Like', 'Love', 'Adore', 'Perfect', 'Amazing', 'Incredible', 'Perfect'];
       return texts[rating] || '';
     } else if (variant === 'thumbs') {
-      return rating > 5 ? '👍' : rating > 0 ? '👎' : '';
+      return rating > 5 ? 'Like' : rating > 0 ? 'Dislike' : '';
     } else {
-      const texts = ['', '😴', '😐', '😕', '😔', '😊', '😄', '😃', '😍', '🤩', '🔥'];
+      const texts = ['', 'Terrible', 'Bad', 'Poor', 'OK', 'Good', 'Great', 'Excellent', 'Amazing', 'Outstanding', 'Perfect'];
       return texts[rating] || '';
     }
   };
@@ -199,7 +199,7 @@ export function RatingControl({
                 {getRatingText(displayRating)} {displayRating}/10
               </span>
             ) : (
-              'Rate this! ⭐'
+              'Rate this!'
             )}
           </p>
           {userRating > 0 && (

@@ -15,29 +15,29 @@ export function Footer() {
               <span className="font-bold text-xl">RATE MY</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              The University of Houston&apos;s most fun dorm and fashion rating community! 🎉
+              The University of Houston&apos;s most fun dorm and fashion rating community!
             </p>
           </div>
 
           {/* Navigation */}
           <div className="space-y-4">
-            <h3 className="font-semibold">Explore 🗺️</h3>
+            <h3 className="font-semibold">Explore</h3>
             <div className="space-y-2">
               <Link href="/dorm-wars" className="block text-sm text-muted-foreground hover:text-foreground transition-colors hover-scale">
-                🏠 Dorm Wars
+                Dorm Wars
               </Link>
               <Link href="/fit-checks" className="block text-sm text-muted-foreground hover:text-foreground transition-colors hover-scale">
-                👗 Fit Checks
+                Fit Checks
               </Link>
               <Link href="/apply" className="block text-sm text-muted-foreground hover:text-foreground transition-colors hover-scale">
-                ✨ Apply
+                Apply
               </Link>
             </div>
           </div>
 
           {/* Social */}
           <div className="space-y-4">
-            <h3 className="font-semibold">Follow Us 📱</h3>
+            <h3 className="font-semibold">Follow Us</h3>
             <div className="flex space-x-4">
               <a
                 href="https://youtube.com/@BYELYK"
@@ -71,13 +71,13 @@ export function Footer() {
 
           {/* Legal */}
           <div className="space-y-4">
-            <h3 className="font-semibold">Legal ⚖️</h3>
+            <h3 className="font-semibold">Legal</h3>
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">
-                This website is not affiliated with the University of Houston. 🤝
+                This website is not affiliated with the University of Houston.
               </p>
               <p className="text-xs text-muted-foreground">
-                All content is user-generated and for entertainment purposes. Have fun! 🎉
+                All content is user-generated and for entertainment purposes. Have fun!
               </p>
             </div>
           </div>

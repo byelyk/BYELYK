@@ -24,12 +24,12 @@ export default function Home() {
             <div className="text-center mb-12">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Trophy className="h-6 w-6 text-primary animate-bounce-slow" />
-                <h2 className="text-3xl font-bold gradient-text">🏆 Recent Winners 🏆</h2>
+                <h2 className="text-3xl font-bold gradient-text">Recent Winners</h2>
                 <Trophy className="h-6 w-6 text-primary animate-bounce-slow" style={{ animationDelay: '0.5s' }} />
               </div>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Check out the highest-rated dorms and most stylish fits from our amazing community! 
-                These legends are setting the bar high! 🔥
+                These legends are setting the bar high!
               </p>
             </div>
 
@@ -39,7 +39,7 @@ export default function Home() {
                 <div className="flex items-center gap-2 mb-6">
                   <Award className="h-5 w-5 text-primary animate-pulse" />
                   <h3 className="text-xl font-semibold flex items-center gap-2">
-                    🏠 Top Dorms 
+                    Top Dorms 
                     <Flame className="h-4 w-4 text-orange-500" />
                   </h3>
                 </div>
@@ -51,7 +51,7 @@ export default function Home() {
                           <div className="flex items-center space-x-3">
                             <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-lg hover-scale">
                               <span className="text-sm font-bold text-primary">
-                                {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                                {index === 0 ? '1st' : index === 1 ? '2nd' : '3rd'}
                               </span>
                             </div>
                             <div>
@@ -65,7 +65,7 @@ export default function Home() {
                               <span className="font-medium">{dorm.rating.average.toFixed(1)}</span>
                             </div>
                             <Badge variant="outline" className="text-xs">
-                              {dorm.rating.count} reviews 💬
+                              {dorm.rating.count} reviews
                             </Badge>
                           </div>
                         </div>
@@ -80,7 +80,7 @@ export default function Home() {
                 <div className="flex items-center gap-2 mb-6">
                   <TrendingUp className="h-5 w-5 text-primary animate-pulse" />
                   <h3 className="text-xl font-semibold flex items-center gap-2">
-                    👗 Trending Fits 
+                    Trending Fits 
                     <Sparkles className="h-4 w-4 text-pink-500" />
                   </h3>
                 </div>
@@ -92,7 +92,7 @@ export default function Home() {
                           <div className="flex items-center space-x-3">
                             <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-lg hover-scale">
                               <span className="text-sm font-bold text-primary">
-                                {index === 0 ? '✨' : index === 1 ? '💫' : '⭐'}
+                                {index === 0 ? 'Top' : index === 1 ? '2nd' : '3rd'}
                               </span>
                             </div>
                             <div>
@@ -106,7 +106,7 @@ export default function Home() {
                               <span className="font-medium">{fit.rating.average.toFixed(1)}</span>
                             </div>
                             <Badge variant="outline" className="text-xs">
-                              {fit.rating.count} votes 💖
+                              {fit.rating.count} votes
                             </Badge>
                           </div>
                         </div>
@@ -123,26 +123,26 @@ export default function Home() {
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold gradient-text mb-2">🚀 We&apos;re Growing Fast! 🚀</h2>
+              <h2 className="text-2xl font-bold gradient-text mb-2">We&apos;re Growing Fast!</h2>
               <p className="text-muted-foreground">Join thousands of students making UH life more fun!</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div className="space-y-2 hover-scale">
                 <div className="text-3xl font-bold text-primary animate-bounce-slow">200+</div>
                 <div className="text-muted-foreground flex items-center justify-center gap-1">
-                  🏠 Dorm Reviews
+                  Dorm Reviews
                 </div>
               </div>
               <div className="space-y-2 hover-scale">
                 <div className="text-3xl font-bold text-primary animate-bounce-slow" style={{ animationDelay: '0.5s' }}>150+</div>
                 <div className="text-muted-foreground flex items-center justify-center gap-1">
-                  👗 Fit Submissions
+                  Fit Submissions
                 </div>
               </div>
               <div className="space-y-2 hover-scale">
                 <div className="text-3xl font-bold text-primary animate-bounce-slow" style={{ animationDelay: '1s' }}>50+</div>
                 <div className="text-muted-foreground flex items-center justify-center gap-1">
-                  ⭐ Featured Students
+                  Featured Students
                 </div>
               </div>
             </div>

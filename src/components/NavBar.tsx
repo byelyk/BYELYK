@@ -36,19 +36,19 @@ export function NavBar() {
               href="/dorm-wars" 
               className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-1"
             >
-              🏠 Dorm Wars
+              Dorm Wars
             </Link>
             <Link 
               href="/fit-checks" 
               className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-1"
             >
-              👗 Fit Checks
+              Fit Checks
             </Link>
             <Link 
               href="/apply" 
               className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-1"
             >
-              ✨ Apply
+              Apply
             </Link>
             {session?.user?.role === 'ADMIN' && (
               <Link 
@@ -106,21 +106,21 @@ export function NavBar() {
                 className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                🏠 Dorm Wars
+                Dorm Wars
               </Link>
               <Link 
                 href="/fit-checks" 
                 className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                👗 Fit Checks
+                Fit Checks
               </Link>
               <Link 
                 href="/apply" 
                 className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                ✨ Apply
+                Apply
               </Link>
               {session?.user?.role === 'ADMIN' && (
                 <Link 

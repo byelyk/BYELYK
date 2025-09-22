@@ -29,7 +29,7 @@ export function ItemCard({ item, type }: ItemCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           <div className="absolute top-3 right-3">
             <Badge variant="secondary" className="backdrop-blur-sm bg-white/90 hover-scale">
-              {isDorm ? dorm?.type.replace('-', ' ') : 'Fit'} {isDorm ? '🏠' : '👗'}
+              {isDorm ? dorm?.type.replace('-', ' ') : 'Fit'}
             </Badge>
           </div>
           {item.rating.average >= 8 && (
@@ -73,7 +73,7 @@ export function ItemCard({ item, type }: ItemCardProps) {
                   <Star className="h-4 w-4 fill-primary text-primary hover-scale" />
                   <span className="font-medium">{item.rating.average.toFixed(1)}</span>
                   <span className="text-sm text-muted-foreground">
-                    ({item.rating.count}) {item.rating.average >= 8 ? '🔥' : item.rating.average >= 6 ? '👍' : '😐'}
+                    ({item.rating.count}) {item.rating.average >= 8 ? 'Hot' : item.rating.average >= 6 ? 'Good' : 'OK'}
                   </span>
                 </div>
                 

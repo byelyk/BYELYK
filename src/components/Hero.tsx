@@ -15,15 +15,15 @@ export function Hero() {
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Sparkles className="h-6 w-6 text-primary animate-sparkle" />
-            <span className="text-sm font-medium text-primary">✨ Welcome to the fun zone! ✨</span>
+            <span className="text-sm font-medium text-primary">Welcome to the fun zone!</span>
             <Sparkles className="h-6 w-6 text-primary animate-sparkle" style={{ animationDelay: '0.5s' }} />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 gradient-text">
-            Rate Dorms. Rank Fits. Crown Winners. 👑
+            Rate Dorms. Rank Fits. Crown Winners.
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join the University of Houston&apos;s most fun dorm and fashion rating community! 🎉 
-            Discover the best housing options and showcase your style with fellow Coogs! 🐾
+            Join the University of Houston&apos;s most fun dorm and fashion rating community! 
+            Discover the best housing options and showcase your style with fellow Coogs!
           </p>
           
           {/* Feature Cards */}
@@ -34,26 +34,26 @@ export function Hero() {
                   <Home className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                  🏠 Dorm Wars 
+                  Dorm Wars 
                   <Zap className="h-5 w-5 text-primary animate-pulse" />
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  Rate and review UH residence halls! 🏢 Find your perfect dorm, 
+                  Rate and review UH residence halls! Find your perfect dorm, 
                   see what students really think, and help others make the best choice. 
-                  It&apos;s like Yelp but way more fun! 😄
+                  It&apos;s like Yelp but way more fun!
                 </p>
                 <div className="flex items-center justify-center space-x-2 mb-6">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-5 w-5 fill-primary text-primary hover-scale" />
                   ))}
-                  <span className="text-sm text-muted-foreground ml-2">4.8/5 from 200+ reviews 🔥</span>
+                  <span className="text-sm text-muted-foreground ml-2">4.8/5 from 200+ reviews</span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button asChild className="flex-1 btn-playful">
-                    <Link href="/dorm-wars">🏃‍♂️ Browse Dorms</Link>
+                    <Link href="/dorm-wars">Browse Dorms</Link>
                   </Button>
                   <Button asChild variant="outline" className="flex-1 btn-playful">
-                    <Link href="/apply/dorm-wars">✨ Apply to Feature</Link>
+                    <Link href="/apply/dorm-wars">Apply to Feature</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -65,26 +65,26 @@ export function Hero() {
                   <Shirt className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                  👗 Fit Checks 
+                  Fit Checks 
                   <Heart className="h-5 w-5 text-primary animate-pulse" />
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  Showcase your style and rate campus fashion! 👔 Get inspired by 
+                  Showcase your style and rate campus fashion! Get inspired by 
                   fellow students&apos; outfits and share your own looks. 
-                  Fashion is art, and you&apos;re the artist! 🎨
+                  Fashion is art, and you&apos;re the artist!
                 </p>
                 <div className="flex items-center justify-center space-x-2 mb-6">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-5 w-5 fill-primary text-primary hover-scale" />
                   ))}
-                  <span className="text-sm text-muted-foreground ml-2">4.9/5 from 150+ fits 💅</span>
+                  <span className="text-sm text-muted-foreground ml-2">4.9/5 from 150+ fits</span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button asChild className="flex-1 btn-playful">
-                    <Link href="/fit-checks">👀 Browse Fits</Link>
+                    <Link href="/fit-checks">Browse Fits</Link>
                   </Button>
                   <Button asChild variant="outline" className="flex-1 btn-playful">
-                    <Link href="/apply/fit-checks">📸 Submit a Fit</Link>
+                    <Link href="/apply/fit-checks">Submit a Fit</Link>
                   </Button>
                 </div>
               </CardContent>

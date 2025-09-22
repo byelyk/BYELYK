@@ -436,7 +436,7 @@ export default function AdminPage() {
                               <div>
                                 <h3 className="font-medium">{vote.user?.name || 'Unknown User'}</h3>
                                 <p className="text-sm text-muted-foreground">
-                                  Rated {vote.itemType === 'DORM' ? '🏠' : '👗'} {vote.itemId}
+                                  Rated {vote.itemType === 'DORM' ? 'Dorm' : 'Fit'} {vote.itemId}
                                 </p>
                                 <div className="flex items-center space-x-2 mt-1">
                                   <div className="flex items-center space-x-1">
