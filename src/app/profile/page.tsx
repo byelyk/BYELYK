@@ -93,7 +93,7 @@ export default function ProfilePage() {
                   <div>
                     <h1 className="text-2xl font-bold">{session.user?.name}</h1>
                     <p className="text-muted-foreground">{session.user?.email}</p>
-                    {session.user?.role === 'ADMIN' && (
+                    {(session.user as any)?.role === 'ADMIN' && (
                       <Badge variant="default" className="mt-1">
                         Admin
                       </Badge>
@@ -144,7 +144,7 @@ export default function ProfilePage() {
                 <Card>
                   <CardContent className="p-8 text-center text-muted-foreground">
                     <Star className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>You haven't rated anything yet.</p>
+                    <p>You haven&apos;t rated anything yet.</p>
                     <p className="text-sm">Start exploring and rate dorms and fits!</p>
                   </CardContent>
                 </Card>
@@ -180,7 +180,7 @@ export default function ProfilePage() {
                 <Card>
                   <CardContent className="p-8 text-center text-muted-foreground">
                     <Edit className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>You haven't submitted any applications yet.</p>
+                    <p>You haven&apos;t submitted any applications yet.</p>
                     <p className="text-sm">Apply to be featured in Dorm Wars or Fit Checks!</p>
                   </CardContent>
                 </Card>

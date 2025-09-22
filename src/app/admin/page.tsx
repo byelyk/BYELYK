@@ -33,7 +33,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (status === 'loading') return;
     
-    if (!session || session.user?.role !== 'ADMIN') {
+    if (!session || (session.user as any)?.role !== 'ADMIN') {
       router.push('/auth/signin');
       return;
     }
@@ -139,7 +139,7 @@ export default function AdminPage() {
     );
   }
 
-  if (!session || session.user?.role !== 'ADMIN') {
+  if (!session || (session.user as any)?.role !== 'ADMIN') {
     return null;
   }
 

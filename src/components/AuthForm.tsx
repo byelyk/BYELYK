@@ -98,7 +98,7 @@ export function AuthForm() {
         <div className="flex items-center gap-2">
           <User className="h-4 w-4" />
           <span className="text-sm font-medium">{session.user?.name}</span>
-          {session.user?.role === 'ADMIN' && (
+          {(session.user as any)?.role === 'ADMIN' && (
             <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
               Admin
             </span>

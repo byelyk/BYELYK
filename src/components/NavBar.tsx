@@ -65,7 +65,7 @@ export function NavBar() {
                   <Button variant="ghost" size="sm">
                     <User className="h-4 w-4 mr-2" />
                     {session.user?.name}
-                    {session.user?.role === 'ADMIN' && (
+                    {(session.user as any)?.role === 'ADMIN' && (
                       <span className="ml-2 text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
                         Admin
                       </span>
@@ -136,7 +136,7 @@ export function NavBar() {
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4" />
                     <span className="text-sm">{session.user?.name}</span>
-                    {session.user?.role === 'ADMIN' && (
+                    {(session.user as any)?.role === 'ADMIN' && (
                       <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
                         Admin
                       </span>
