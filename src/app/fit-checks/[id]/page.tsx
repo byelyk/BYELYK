@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ import { ApplyCTA } from '@/components/ApplyCTA';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, MapPin, Star, Shirt } from 'lucide-react';
+import { ArrowLeft, User, MapPin, Star, Shirt, Loader2 } from 'lucide-react';
 import { getFitById, getFits, rateFit } from '@/lib/data';
 import { Fit } from '@/lib/types';
 import { track, ANALYTICS_EVENTS } from '@/lib/analytics';
@@ -23,9 +23,40 @@ interface FitDetailPageProps {
 }
 
 export default function FitDetailPage({ params }: FitDetailPageProps) {
-  const [fit, setFit] = useState<Fit | undefined>(getFitById(params.id));
+  const [fit, setFit] = useState<Fit | undefined>(undefined);
   const [userRating, setUserRating] = useState<number>(0);
   const [isRating, setIsRating] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFit = async () => {
+      try {
+        const fitData = await getFitById(params.id);
+        if (!fitData) {
+          notFound();
+        }
+        setFit(fitData);
+      } catch (error) {
+        console.error('Error fetching fit:', error);
+        notFound();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFit();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading fit details...</span>
+        </div>
+      </div>
+    );
+  }
 
   if (!fit) {
     notFound();
@@ -45,9 +76,25 @@ export default function FitDetailPage({ params }: FitDetailPageProps) {
     }
   };
 
-  const relatedFits = getFits()
-    .filter(f => f.id !== fit.id && f.styleTags.some(tag => fit.styleTags.includes(tag)))
-    .slice(0, 3);
+  const [relatedFits, setRelatedFits] = useState<Fit[]>([]);
+
+  useEffect(() => {
+    const fetchRelatedFits = async () => {
+      try {
+        const allFits = await getFits();
+        const related = allFits
+          .filter(f => f.id !== fit.id && f.styleTags.some(tag => fit.styleTags.includes(tag)))
+          .slice(0, 3);
+        setRelatedFits(related);
+      } catch (error) {
+        console.error('Error fetching related fits:', error);
+      }
+    };
+
+    if (fit) {
+      fetchRelatedFits();
+    }
+  }, [fit]);
 
   return (
     <div className="min-h-screen bg-background">

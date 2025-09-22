@@ -6,10 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Star, TrendingUp, Award, Trophy, Flame, Sparkles } from 'lucide-react';
 import { getDorms, getFits } from '@/lib/data';
 
-export default function Home() {
+export default async function Home() {
   // Get top-rated items for the homepage
-  const topDorms = getDorms().slice(0, 3);
-  const topFits = getFits().slice(0, 3);
+  const allDorms = await getDorms();
+  const allFits = await getFits();
+  const topDorms = allDorms.slice(0, 3);
+  const topFits = allFits.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-background">

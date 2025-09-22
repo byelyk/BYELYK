@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 import { FilterBar } from '@/components/FilterBar';
@@ -8,21 +8,58 @@ import { ItemCard } from '@/components/ItemCard';
 import { Leaderboard } from '@/components/Leaderboard';
 import { ApplyCTA } from '@/components/ApplyCTA';
 import { getDorms, HALL_OPTIONS, TYPE_OPTIONS, TAG_OPTIONS } from '@/lib/data';
+import { Dorm } from '@/lib/types';
+import { Loader2 } from 'lucide-react';
 
 export default function DormWarsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedHalls, setSelectedHalls] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [dorms, setDorms] = useState<Dorm[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDorms = async () => {
+      try {
+        const allDorms = await getDorms();
+        setDorms(allDorms);
+      } catch (error) {
+        console.error('Error fetching dorms:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDorms();
+  }, []);
 
   const filteredDorms = useMemo(() => {
-    return getDorms({
-      q: searchQuery,
-      hall: selectedHalls.length > 0 ? selectedHalls : undefined,
-      type: selectedTypes.length > 0 ? selectedTypes : undefined,
-      tags: selectedTags.length > 0 ? selectedTags : undefined,
+    return dorms.filter(dorm => {
+      const matchesSearch = !searchQuery || 
+        dorm.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (dorm.description && dorm.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        dorm.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      const matchesHalls = selectedHalls.length === 0 || selectedHalls.includes(dorm.name);
+      const matchesTypes = selectedTypes.length === 0 || selectedTypes.includes(dorm.type);
+      const matchesTags = selectedTags.length === 0 || 
+        selectedTags.some(tag => dorm.tags.includes(tag));
+
+      return matchesSearch && matchesHalls && matchesTypes && matchesTags;
     });
-  }, [searchQuery, selectedHalls, selectedTypes, selectedTags]);
+  }, [dorms, searchQuery, selectedHalls, selectedTypes, selectedTags]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading dorms...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -82,7 +119,7 @@ export default function DormWarsPage() {
             </div>
 
             {/* Leaderboard */}
-            <Leaderboard items={getDorms()} type="dorm" />
+            <Leaderboard items={dorms} type="dorm" />
           </div>
 
           {/* Dorms Grid */}

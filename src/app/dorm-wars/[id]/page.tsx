@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ import { ApplyCTA } from '@/components/ApplyCTA';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MapPin, Home, Star, CheckCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Home, Star, CheckCircle, Loader2 } from 'lucide-react';
 import { getDormById, getDorms, rateDorm } from '@/lib/data';
 import { Dorm } from '@/lib/types';
 import { track, ANALYTICS_EVENTS } from '@/lib/analytics';
@@ -23,9 +23,40 @@ interface DormDetailPageProps {
 }
 
 export default function DormDetailPage({ params }: DormDetailPageProps) {
-  const [dorm, setDorm] = useState<Dorm | undefined>(getDormById(params.id));
+  const [dorm, setDorm] = useState<Dorm | undefined>(undefined);
   const [userRating, setUserRating] = useState<number>(0);
   const [isRating, setIsRating] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDorm = async () => {
+      try {
+        const dormData = await getDormById(params.id);
+        if (!dormData) {
+          notFound();
+        }
+        setDorm(dormData);
+      } catch (error) {
+        console.error('Error fetching dorm:', error);
+        notFound();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDorm();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading dorm details...</span>
+        </div>
+      </div>
+    );
+  }
 
   if (!dorm) {
     notFound();
@@ -45,9 +76,25 @@ export default function DormDetailPage({ params }: DormDetailPageProps) {
     }
   };
 
-  const relatedDorms = getDorms()
-    .filter(d => d.id !== dorm.id && d.type === dorm.type)
-    .slice(0, 3);
+  const [relatedDorms, setRelatedDorms] = useState<Dorm[]>([]);
+
+  useEffect(() => {
+    const fetchRelatedDorms = async () => {
+      try {
+        const allDorms = await getDorms();
+        const related = allDorms
+          .filter(d => d.id !== dorm.id && d.type === dorm.type)
+          .slice(0, 3);
+        setRelatedDorms(related);
+      } catch (error) {
+        console.error('Error fetching related dorms:', error);
+      }
+    };
+
+    if (dorm) {
+      fetchRelatedDorms();
+    }
+  }, [dorm]);
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 import { FilterBar } from '@/components/FilterBar';
@@ -8,17 +8,54 @@ import { ItemCard } from '@/components/ItemCard';
 import { Leaderboard } from '@/components/Leaderboard';
 import { ApplyCTA } from '@/components/ApplyCTA';
 import { getFits, STYLE_TAG_OPTIONS } from '@/lib/data';
+import { Fit } from '@/lib/types';
+import { Loader2 } from 'lucide-react';
 
 export default function FitChecksPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStyleTags, setSelectedStyleTags] = useState<string[]>([]);
+  const [fits, setFits] = useState<Fit[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFits = async () => {
+      try {
+        const allFits = await getFits();
+        setFits(allFits);
+      } catch (error) {
+        console.error('Error fetching fits:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFits();
+  }, []);
 
   const filteredFits = useMemo(() => {
-    return getFits({
-      q: searchQuery,
-      styleTags: selectedStyleTags.length > 0 ? selectedStyleTags : undefined,
+    return fits.filter(fit => {
+      const matchesSearch = !searchQuery || 
+        fit.creator.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        fit.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        fit.styleTags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      const matchesStyleTags = selectedStyleTags.length === 0 || 
+        selectedStyleTags.some(tag => fit.styleTags.includes(tag));
+
+      return matchesSearch && matchesStyleTags;
     });
-  }, [searchQuery, selectedStyleTags]);
+  }, [fits, searchQuery, selectedStyleTags]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading fits...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,7 +89,7 @@ export default function FitChecksPage() {
             </div>
 
             {/* Leaderboard */}
-            <Leaderboard items={getFits()} type="fit" />
+            <Leaderboard items={fits} type="fit" />
           </div>
 
           {/* Fits Grid */}
