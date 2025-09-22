@@ -24,9 +24,9 @@ export function NavBar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 hover-scale">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center hover-glow">
-              <span className="text-primary-foreground font-bold text-sm">RM</span>
+              <span className="text-primary-foreground font-bold text-sm">RU</span>
             </div>
-            <span className="font-bold text-xl gradient-text">RATE MY</span>
+            <span className="font-bold text-xl gradient-text">RUMERED</span>
             <span className="text-sm text-muted-foreground">BYELYK</span>
           </Link>
 

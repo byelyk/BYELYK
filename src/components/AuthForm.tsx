@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, LogOut, Mail, Lock, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 export function AuthForm() {
   const { data: session, status } = useSession();
@@ -115,7 +116,7 @@ export function AuthForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-center">Welcome to Rate My</CardTitle>
+        <CardTitle className="text-center">Welcome to Rumered</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="signin" className="w-full">
@@ -160,6 +161,14 @@ export function AuthForm() {
                 {isLoading ? 'Signing In...' : 'Sign In'}
               </Button>
             </form>
+            
+            <div className="mt-4 text-center">
+              <Link href="/auth/forgot-password">
+                <Button variant="link" className="text-sm">
+                  Forgot your password?
+                </Button>
+              </Link>
+            </div>
           </TabsContent>
 
           <TabsContent value="signup">
