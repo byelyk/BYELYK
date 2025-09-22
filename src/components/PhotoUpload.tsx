@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Upload, X, Plus } from 'lucide-react';
@@ -105,10 +106,11 @@ export function PhotoUpload({
             <Card key={index} className="relative group">
               <CardContent className="p-2">
                 <div className="aspect-square relative overflow-hidden rounded-lg">
-                  <img
+                  <Image
                     src={photo}
                     alt={`Photo ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Button
