@@ -24,7 +24,6 @@ interface DormDetailPageProps {
 
 export default function DormDetailPage({ params }: DormDetailPageProps) {
   const [dorm, setDorm] = useState<Dorm | undefined>(undefined);
-  const [userRating, setUserRating] = useState<number>(0);
   const [isRating, setIsRating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [relatedDorms, setRelatedDorms] = useState<Dorm[]>([]);
@@ -86,7 +85,6 @@ export default function DormDetailPage({ params }: DormDetailPageProps) {
     try {
       const newRating = rateDorm(dorm.id, rating);
       setDorm({ ...dorm, rating: newRating });
-      setUserRating(rating);
       track(ANALYTICS_EVENTS.RATE_DORM, { dormId: dorm.id, rating });
     } catch (error) {
       console.error('Failed to rate dorm:', error);
@@ -233,7 +231,6 @@ export default function DormDetailPage({ params }: DormDetailPageProps) {
                     <RatingControl
                       itemId={dorm.id}
                       itemType="DORM"
-                      currentRating={userRating}
                       onRate={handleRate}
                       disabled={isRating}
                     />

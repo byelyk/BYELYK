@@ -94,7 +94,6 @@ export function ItemCard({ item, type }: ItemCardProps) {
               <RatingControl
                 itemId={item.id}
                 itemType={isDorm ? 'DORM' : 'FIT'}
-                currentRating={item.rating.average}
                 size="sm"
                 showLabel={false}
                 variant={isDorm ? 'stars' : 'hearts'}

@@ -24,7 +24,6 @@ interface FitDetailPageProps {
 
 export default function FitDetailPage({ params }: FitDetailPageProps) {
   const [fit, setFit] = useState<Fit | undefined>(undefined);
-  const [userRating, setUserRating] = useState<number>(0);
   const [isRating, setIsRating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [relatedFits, setRelatedFits] = useState<Fit[]>([]);
@@ -86,7 +85,6 @@ export default function FitDetailPage({ params }: FitDetailPageProps) {
     try {
       const newRating = rateFit(fit.id, rating);
       setFit({ ...fit, rating: newRating });
-      setUserRating(rating);
       track(ANALYTICS_EVENTS.RATE_FIT, { fitId: fit.id, rating });
     } catch (error) {
       console.error('Failed to rate fit:', error);
@@ -215,7 +213,6 @@ export default function FitDetailPage({ params }: FitDetailPageProps) {
                     <RatingControl
                       itemId={fit.id}
                       itemType="FIT"
-                      currentRating={userRating}
                       onRate={handleRate}
                       disabled={isRating}
                     />

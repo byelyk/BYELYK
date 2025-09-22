@@ -50,7 +50,7 @@ export function NavBar() {
             >
               Apply
             </Link>
-            {session?.user?.role === 'ADMIN' && (
+            {(session?.user as any)?.role === 'ADMIN' && (
               <Link 
                 href="/admin" 
                 className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-1"
@@ -122,7 +122,7 @@ export function NavBar() {
               >
                 Apply
               </Link>
-              {session?.user?.role === 'ADMIN' && (
+              {(session?.user as any)?.role === 'ADMIN' && (
                 <Link 
                   href="/admin" 
                   className="text-sm font-medium hover:text-primary transition-colors hover-scale flex items-center gap-2"

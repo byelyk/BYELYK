@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
+//import { getServerSession } from 'next-auth/next';
+import { getSessionUser } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions) as any;
+    const user = await getSessionUser(request);
     
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return NextResponse.json(
         { message: 'Authentication required' },
         { status: 401 }
