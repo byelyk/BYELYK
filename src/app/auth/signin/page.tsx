@@ -20,7 +20,7 @@ export default function SignInPage() {
           </div>
           
           <div className="text-center">
-            <Link href={`https://api.stack-auth.com/authenticate?project_id=${process.env.NEXT_PUBLIC_STACK_PROJECT_ID}`} className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground">
+            <Link href={`https://app.stack-auth.com/authenticate?project_id=${process.env.NEXT_PUBLIC_STACK_PROJECT_ID}`} className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground">
               Sign in with Neon Auth
             </Link>
           </div>
