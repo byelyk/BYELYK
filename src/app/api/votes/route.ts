@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 //import { auth } from '@/lib/auth';
-import { auth } from '@/lib/auth';
+import { cookies } from 'next/headers';
 
 import { prisma } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    if (!(session as any)?.user?.id) {
+    const cookieStore = await cookies();
+    const userCookie = cookieStore.get('user-session');
+    if (!userCookie) {
       return NextResponse.json(
         { message: 'Authentication required' },
         { status: 401 }
       );
     }
+    const user = JSON.parse(userCookie.value);
 
     const { itemId, itemType, score } = await request.json();
 
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
     const vote = await prisma.vote.upsert({
       where: {
         userId_itemId_itemType: {
-          userId: (session as any)?.user?.id || 'demo-user',
+          userId: user.id,
           itemId,
           itemType: itemType as 'DORM' | 'FIT',
         },
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
         score,
       },
       create: {
-        userId: (session as any)?.user?.id || 'demo-user',
+        userId: user.id,
         itemId,
         itemType: itemType as 'DORM' | 'FIT',
         score,
@@ -70,14 +71,15 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    if (!(session as any)?.user?.id) {
+    const cookieStore = await cookies();
+    const userCookie = cookieStore.get('user-session');
+    if (!userCookie) {
       return NextResponse.json(
         { message: 'Authentication required' },
         { status: 401 }
       );
     }
+    const user = JSON.parse(userCookie.value);
 
     const { searchParams } = new URL(request.url);
     const itemId = searchParams.get('itemId');
@@ -93,7 +95,7 @@ export async function GET(request: NextRequest) {
     const vote = await prisma.vote.findUnique({
       where: {
         userId_itemId_itemType: {
-          userId: (session as any)?.user?.id || 'demo-user',
+          userId: user.id,
           itemId,
           itemType: itemType as 'DORM' | 'FIT',
         },

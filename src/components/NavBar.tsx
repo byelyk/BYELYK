@@ -76,9 +76,14 @@ export function NavBar() {
                 </Button>
               </div>
             ) : (
-              <Link href="/auth/signin">
-                <Button size="sm">Sign In</Button>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link href="/auth/register">
+                  <Button variant="outline" size="sm">Register</Button>
+                </Link>
+                <Link href="/auth/signin">
+                  <Button size="sm">Sign In</Button>
+                </Link>
+              </div>
             )}
           </div>
 
@@ -146,9 +151,14 @@ export function NavBar() {
                   </Button>
                 </div>
               ) : (
-                <Link href="/auth/signin" onClick={() => setIsMenuOpen(false)}>
-                  <Button size="sm" className="w-full">Sign In</Button>
-                </Link>
+                <div className="flex flex-col gap-2 pt-4 border-t">
+                  <Link href="/auth/register" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full">Register</Button>
+                  </Link>
+                  <Link href="/auth/signin" onClick={() => setIsMenuOpen(false)}>
+                    <Button size="sm" className="w-full">Sign In</Button>
+                  </Link>
+                </div>
               )}
             </div>
           </div>

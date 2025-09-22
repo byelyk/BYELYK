@@ -14,6 +14,9 @@ export default function SignInPage() {
             <p className="text-muted-foreground">
               Sign in to rate dorms, vote on fits, and apply for features.
             </p>
+            <p className="text-sm mt-2">
+              New here? <a href="/auth/register" className="text-primary hover:underline">Create an account</a>
+            </p>
           </div>
           
           <AuthForm />
