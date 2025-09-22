@@ -11,7 +11,6 @@ import Link from 'next/link';
 interface RatingControlProps {
   itemId: string;
   itemType: 'DORM' | 'FIT';
-  currentRating?: number;
   onRate?: (rating: number) => void;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
@@ -22,7 +21,6 @@ interface RatingControlProps {
 export function RatingControl({ 
   itemId,
   itemType,
-  currentRating = 0, 
   onRate, 
   disabled = false,
   size = 'md',
@@ -68,7 +66,6 @@ export function RatingControl({
       });
 
       if (response.ok) {
-        const data = await response.json();
         setUserRating(rating);
         onRate?.(rating);
         toast.success('Rating submitted!');

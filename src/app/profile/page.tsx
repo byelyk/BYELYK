@@ -5,12 +5,11 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Star, Calendar, Mail, Instagram, MessageSquare, Loader2, Edit, Settings } from 'lucide-react';
-import { toast } from 'sonner';
+import { User, Star, Calendar, Mail, Instagram, Loader2, Edit, Settings } from 'lucide-react';
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();

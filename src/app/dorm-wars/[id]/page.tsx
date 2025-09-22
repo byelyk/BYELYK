@@ -27,6 +27,7 @@ export default function DormDetailPage({ params }: DormDetailPageProps) {
   const [userRating, setUserRating] = useState<number>(0);
   const [isRating, setIsRating] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [relatedDorms, setRelatedDorms] = useState<Dorm[]>([]);
 
   useEffect(() => {
     const fetchDorm = async () => {
@@ -46,6 +47,24 @@ export default function DormDetailPage({ params }: DormDetailPageProps) {
 
     fetchDorm();
   }, [params.id]);
+
+  useEffect(() => {
+    const fetchRelatedDorms = async () => {
+      try {
+        const allDorms = await getDorms();
+        const related = allDorms
+          .filter(d => d.id !== dorm?.id && d.type === dorm?.type)
+          .slice(0, 3);
+        setRelatedDorms(related);
+      } catch (error) {
+        console.error('Error fetching related dorms:', error);
+      }
+    };
+
+    if (dorm) {
+      fetchRelatedDorms();
+    }
+  }, [dorm]);
 
   if (loading) {
     return (
@@ -75,26 +94,6 @@ export default function DormDetailPage({ params }: DormDetailPageProps) {
       setIsRating(false);
     }
   };
-
-  const [relatedDorms, setRelatedDorms] = useState<Dorm[]>([]);
-
-  useEffect(() => {
-    const fetchRelatedDorms = async () => {
-      try {
-        const allDorms = await getDorms();
-        const related = allDorms
-          .filter(d => d.id !== dorm.id && d.type === dorm.type)
-          .slice(0, 3);
-        setRelatedDorms(related);
-      } catch (error) {
-        console.error('Error fetching related dorms:', error);
-      }
-    };
-
-    if (dorm) {
-      fetchRelatedDorms();
-    }
-  }, [dorm]);
 
   return (
     <div className="min-h-screen bg-background">

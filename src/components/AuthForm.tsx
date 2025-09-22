@@ -37,7 +37,7 @@ export function AuthForm() {
         setEmail('');
         setPassword('');
       }
-    } catch (error) {
+    } catch {
       toast.error('An error occurred');
     } finally {
       setIsLoading(false);
@@ -72,7 +72,7 @@ export function AuthForm() {
         const error = await response.json();
         toast.error(error.message || 'Failed to create account');
       }
-    } catch (error) {
+    } catch {
       toast.error('An error occurred');
     } finally {
       setIsLoading(false);

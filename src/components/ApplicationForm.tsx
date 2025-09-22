@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Upload, X, CheckCircle, LogIn } from 'lucide-react';
-import { submitApplication, HALL_OPTIONS } from '@/lib/data';
+import { HALL_OPTIONS } from '@/lib/data';
 import { track, ANALYTICS_EVENTS } from '@/lib/analytics';
 import Link from 'next/link';
 

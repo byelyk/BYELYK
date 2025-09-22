@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star, MapPin, Users, Heart, Sparkles } from 'lucide-react';
+import { Star, MapPin, Users, Sparkles } from 'lucide-react';
 import { Dorm, Fit } from '@/lib/types';
 import { RatingControl } from '@/components/RatingControl';
 

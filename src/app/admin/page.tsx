@@ -9,9 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, Mail, Instagram, MessageSquare, Calendar, User, Loader2, Users, BarChart3, Edit, Trash2, Star, Heart, Image as ImageIcon } from 'lucide-react';
-import { getApplications, getApplicationsBySection } from '@/lib/data';
-import { Application } from '@/lib/types';
+import { Eye, Mail, Instagram, MessageSquare, Calendar, User, Loader2, Edit, Trash2, Star, Heart, Image as ImageIcon } from 'lucide-react';
 import { AdminEditModal } from '@/components/AdminEditModal';
 import { toast } from 'sonner';
 

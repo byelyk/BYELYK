@@ -27,6 +27,7 @@ export default function FitDetailPage({ params }: FitDetailPageProps) {
   const [userRating, setUserRating] = useState<number>(0);
   const [isRating, setIsRating] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [relatedFits, setRelatedFits] = useState<Fit[]>([]);
 
   useEffect(() => {
     const fetchFit = async () => {
@@ -46,6 +47,24 @@ export default function FitDetailPage({ params }: FitDetailPageProps) {
 
     fetchFit();
   }, [params.id]);
+
+  useEffect(() => {
+    const fetchRelatedFits = async () => {
+      try {
+        const allFits = await getFits();
+        const related = allFits
+          .filter(f => f.id !== fit?.id && f.styleTags.some(tag => fit?.styleTags.includes(tag)))
+          .slice(0, 3);
+        setRelatedFits(related);
+      } catch (error) {
+        console.error('Error fetching related fits:', error);
+      }
+    };
+
+    if (fit) {
+      fetchRelatedFits();
+    }
+  }, [fit]);
 
   if (loading) {
     return (
@@ -75,26 +94,6 @@ export default function FitDetailPage({ params }: FitDetailPageProps) {
       setIsRating(false);
     }
   };
-
-  const [relatedFits, setRelatedFits] = useState<Fit[]>([]);
-
-  useEffect(() => {
-    const fetchRelatedFits = async () => {
-      try {
-        const allFits = await getFits();
-        const related = allFits
-          .filter(f => f.id !== fit.id && f.styleTags.some(tag => fit.styleTags.includes(tag)))
-          .slice(0, 3);
-        setRelatedFits(related);
-      } catch (error) {
-        console.error('Error fetching related fits:', error);
-      }
-    };
-
-    if (fit) {
-      fetchRelatedFits();
-    }
-  }, [fit]);
 
   return (
     <div className="min-h-screen bg-background">

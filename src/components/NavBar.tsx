@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const handleSignOut = () => {
     signOut();
